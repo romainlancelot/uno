@@ -1,0 +1,19 @@
+Le but de ce jeu est de se débarrasser de ses cartes (initialement sept par joueur) en jouant l'un après l'autre. Il y a deux types de cartes : 
+    - les cartes normales caractérisées par un chiffre (0-9) et une couleur (rouge, vert, bleu ou jaune)
+    - les cartes spéciales
+
+A chaque tour, le joueur peut se séparer d'une carte normale uniquement si elle possède la même couleur ou le même chiffre que la précédente.
+Un joueur ne pouvant se débarrasser d'une carte doit en piocher une. Si elle est “jouable”, celle-ci peut alors être jouée immédiatement.
+
+Les cartes spéciales ont les effets suivants :
+    - “sauter le tour” : le joueur suivant passe son tour,
+    - “+2” et “+4” : le joueur suivant pioche deux ou quatre cartes et passe son tour,
+    - “changer de sens” : change le sens du jeu.
+Ces cartes ont également une couleur et ne peuvent être jouées que sur la bonne couleur, ou sur une carte spéciale de même type.
+
+Il y a en plus des “jokers” : ils peuvent ếtre joués après n'importe quelle carte, et la couleur suivante est désignée par le joueur qui le pose.
+
+Un joueur qui ne possède plus qu'une carte doit l'annoncer en disant “UNO”. S'il l'oublie et qu'un autre joueur le remarque, il doit piocher deux cartes.
+
+Les règles plus détaillées et les variantes du jeu sont consultables sur wikipedia :
+http://fr.wikipedia.org/wiki/Uno
