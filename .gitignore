@@ -1,0 +1,11 @@
+# IDE
+.vscode
+
+# exectables
+a.out
+*.exe
+executable
+
+# Compilation files
+*.gch
+*.o
