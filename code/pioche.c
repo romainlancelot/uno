@@ -4,18 +4,17 @@
 #include <time.h>
 
 
-struct carte {
+typedef struct carte {
   char valeur[10];
   char couleur[10];
-};
+} carte;
 
 char *valeurs[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "draw+2", "inversion", "skip", "change", "draw+4"};
 char *couleurs[] = {"rouge", "jaune", "vert", "bleu", "joker"};
 
 int rang; //rang du tableau contenant les cartes
 int taillePioche = 108; //nb total de carte dans la pioche en début de partie
-struct carte jeu[108]; // Déclarer le tableau de cartes global afin qu'il soit accessible depuis main().
-
+carte jeu[108]; // Déclarer le tableau de cartes global afin qu'il soit accessible depuis main().
 
 void creer_jeu() {
   int quatuor, paire, i, j;
@@ -63,7 +62,7 @@ int aleatoire(int *taillePioche) {
 }
 
 // print la carte
-int afficher_carte(struct carte c) {
+int afficher_carte(carte c) {
   printf("%s %s\n", c.valeur, c.couleur);
 }
 
@@ -77,27 +76,68 @@ int supprCarteDePioche() {
   }
 }
 
-int pioche() {
+struct carte pioche(int afficher) {
   // récupère un nb aléatoire
   rang = aleatoire(&taillePioche);
+  carte cartePioche = jeu[rang];
   // Affichage de la carte à l'indice généré aléatoirement
-  afficher_carte(jeu[rang]);
+  if (afficher == 1) {
+    afficher_carte(cartePioche);
+  }
   // supprime la carte pioché de la pioche
   supprCarteDePioche();
-  // print la taille de la pioche restante
   //printf("\n%d\n", taillePioche);
-  return rang;
+  return cartePioche;
+}
+
+// Déclaration des joueurs
+typedef struct joueur {
+  char nom[20];
+  int score;
+  carte main[108];
+} joueur;
+
+void creationJoueur(joueur j) {
+  printf("Quel est votre nom ? ");
+  scanf("%s", j.nom);
+  printf("Bonjour %s\n", j.nom);
+  j.score = 0;
+  printf("Votre score est de %d\n", j.score);
+  
+  // Affichez sa main
+  for (int i = 0; i < 7; i++) {
+    j.main[i] = pioche(0);
+  }
+  printf("Cartes de %s :\n { ", j.nom);
+  for (int i = 0; i < 7; i++) {
+    if (i == 6) {
+      printf("%s %s", j.main[i].valeur, j.main[i].couleur);
+      break;
+    }
+    printf("%s %s | ", j.main[i].valeur, j.main[i].couleur);
+  }
+  printf(" }\n");
 }
 
 int main() {
   creer_jeu();
-  pioche();
-  //printf("%d\n", rang);
+
+  // Déclarez un joueur
+  // int nbJoueur;
+  // printf("Combien de joueurs ? ");
+  // scanf("%d", &nbJoueur);
+
+  joueur j1;
+  creationJoueur(j1);
+  joueur j2;
+  creationJoueur(j2);
+
+  // printf("%d\n", rang);
 
   // Affichez chaque élément du nouveau tableau (vérifier que l'ancienne carte est plus dedans)
-  //for (int i = 0; i < (taillePioche); i++) {
-  //printf("jeu[%d] = %s %s\n", i, jeu[i].valeur, jeu[i].couleur);
-  //}
+  //   for (int i = 0; i < (taillePioche); i++) {
+  //  printf("jeu[%d] = %s %s\n", i, jeu[i].valeur, jeu[i].couleur);
+  // }
 
   return 0;
 }
