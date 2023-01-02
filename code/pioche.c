@@ -15,6 +15,7 @@ char *couleurs[] = {"rouge", "jaune", "vert", "bleu", "joker"};
 int rang; //rang du tableau contenant les cartes
 int taillePioche = 108; //nb total de carte dans la pioche en début de partie
 carte jeu[108]; // Déclarer le tableau de cartes global afin qu'il soit accessible depuis main().
+carte defosse[108];
 
 void creer_jeu() {
   int quatuor, paire, i, j;
@@ -90,34 +91,55 @@ struct carte pioche(int afficher) {
   return cartePioche;
 }
 
-// Déclaration des joueurs
+// déclaration des joueurs
 typedef struct joueur {
   char nom[20];
   int score;
   carte main[108];
+  int nbCartes;
 } joueur;
 
-void creationJoueur(joueur j) {
+void creationJoueur(joueur *j) {
   printf("Quel est votre nom ? ");
-  scanf("%s", j.nom);
-  printf("Bonjour %s\n", j.nom);
-  j.score = 0;
-  printf("Votre score est de %d\n", j.score);
-  
-  // Affichez sa main
-  for (int i = 0; i < 7; i++) {
-    j.main[i] = pioche(0);
-  }
-  printf("Cartes de %s :\n { ", j.nom);
-  for (int i = 0; i < 7; i++) {
-    if (i == 6) {
-      printf("%s %s", j.main[i].valeur, j.main[i].couleur);
+  scanf("%s", j->nom);
+  printf("Bienvenue %s !\n", j->nom);
+  j->score = 0;
+  printf("Votre score est de %d\n", j->score);
+  j->nbCartes = 7;
+
+  // afficher sa main
+  printf("Cartes de %s :\n { ", j->nom);
+  for (int i = 0; i < j->nbCartes; i++) {
+    if (i == j->nbCartes-1) {
+      printf("%s %s }\n", j->main[i].valeur, j->main[i].couleur);
       break;
     }
-    printf("%s %s | ", j.main[i].valeur, j.main[i].couleur);
+    printf("%s %s | ", j->main[i].valeur, j->main[i].couleur);
   }
-  printf(" }\n");
 }
+
+// joueur pose une carte
+void poseCarte(joueur *j) {
+  int choix;
+  printf("Quelle carte voulez vous jouer ? ");
+  scanf("%d", &choix);
+  printf("Vous avez joué la carte %s %s\n", j->main[choix].valeur, j->main[choix].couleur);
+  // supprime la carte joué de la main du joueur
+  for (int i = choix; i < j->nbCartes; i++) {
+    j->main[i] = j->main[i+1];
+  }
+  j->nbCartes--;
+  // afficher sa main
+  printf("Cartes de %s :\n { ", j->nom);
+  for (int i = 0; i < j->nbCartes; i++) {
+    if (i == j->nbCartes-1) {
+      printf("%s %s }\n", j->main[i].valeur, j->main[i].couleur);
+      break;
+    }
+    printf("%s %s | ", j->main[i].valeur, j->main[i].couleur);
+  }
+}
+
 
 int main() {
   creer_jeu();
@@ -128,9 +150,12 @@ int main() {
   // scanf("%d", &nbJoueur);
 
   joueur j1;
-  creationJoueur(j1);
+  creationJoueur(&j1);
+  printf("j1 : %s\n", j1.nom);
   joueur j2;
-  creationJoueur(j2);
+  creationJoueur(&j2);
+
+  poseCarte(&j1);
 
   // printf("%d\n", rang);
 
