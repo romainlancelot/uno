@@ -106,7 +106,10 @@ void creationJoueur(joueur *j) {
   j->score = 0;
   printf("Votre score est de %d\n", j->score);
   j->nbCartes = 7;
-
+  // piocher 7 cartes
+  for (int i = 0; i < j->nbCartes; i++) {
+    j->main[i] = pioche(0);
+  }
   // afficher sa main
   printf("Cartes de %s :\n { ", j->nom);
   for (int i = 0; i < j->nbCartes; i++) {
@@ -157,7 +160,6 @@ int main() {
 
   poseCarte(&j1);
 
-  // printf("%d\n", rang);
 
   // Affichez chaque élément du nouveau tableau (vérifier que l'ancienne carte est plus dedans)
   //   for (int i = 0; i < (taillePioche); i++) {
