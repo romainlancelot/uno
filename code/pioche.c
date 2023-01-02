@@ -143,6 +143,21 @@ void poseCarte(joueur *j) {
   }
 }
 
+// joueur pioche une carte
+void piocheCarte(joueur *j) {
+  j->main[j->nbCartes] = pioche(0);
+  j->nbCartes++;
+  printf("Vous avez pioché la carte : %s %s\n", j->main[j->nbCartes-1].valeur, j->main[j->nbCartes-1].couleur);
+  // afficher sa main
+  printf("Cartes de %s :\n { ", j->nom);
+  for (int i = 0; i < j->nbCartes; i++) {
+    if (i == j->nbCartes-1) {
+      printf("%s %s }\n", j->main[i].valeur, j->main[i].couleur);
+      break;
+    }
+    printf("%s %s | ", j->main[i].valeur, j->main[i].couleur);
+  }
+}
 
 int main() {
   creer_jeu();
@@ -159,6 +174,7 @@ int main() {
   creationJoueur(&j2);
 
   poseCarte(&j1);
+  piocheCarte(&j1);
 
 
   // Affichez chaque élément du nouveau tableau (vérifier que l'ancienne carte est plus dedans)
