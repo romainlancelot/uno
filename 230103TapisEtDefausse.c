@@ -56,9 +56,6 @@ void creer_jeu() {
   }
 }
 
-
-
-
 // fonction pour une carte aléatoire
 int aleatoire(int *taillePioche) {
   // Initialisation du générateur de nombres aléatoires
@@ -71,8 +68,21 @@ int aleatoire(int *taillePioche) {
 }
 
 // print la carte
-int afficher_carte(carte c) {
-  printf("%s %s\n", c.valeur, c.couleur);
+int afficher_carte(carte *c) {
+// char *couleurs[] = {"rouge", "jaune", "vert", "bleu", "joker"};
+  if (strcmp(c->couleur, "rouge") == 0) {
+    printf("\033[0;31m%s %s\033[0m", c->valeur, c->couleur);
+  } else if (strcmp(c->couleur, "jaune") == 0) {
+    printf("\033[0;33m%s %s\033[0m", c->valeur, c->couleur);
+  } else if (strcmp(c->couleur, "vert") == 0) {
+    printf("\033[0;32m%s %s\033[0m", c->valeur, c->couleur);
+    return 0; 
+  } else if (strcmp(c->couleur, "bleu") == 0) {
+    printf("\033[0;34m%s %s\033[0m", c->valeur, c->couleur);
+    return 0;
+  } else {
+    printf("%s %s", c->valeur, c->couleur);
+  }
 }
 
 int supprCarteDePioche() {
@@ -85,13 +95,12 @@ int supprCarteDePioche() {
   }
 }
 
-
 //mets la carte du tapis dans la défausse
 void tapisToDefausse() {
-      defausse[rangDefausse] = tapis[1];
-        //printf la carte défaussée
-        //printf("\ndefausse %d : %s %s\n", rangDefausse, defausse[rangDefausse].valeur, defausse[rangDefausse].couleur);
-          rangDefausse++;
+  defausse[rangDefausse] = tapis[1];
+  //printf la carte défaussée
+  //printf("\ndefausse %d : %s %s\n", rangDefausse, defausse[rangDefausse].valeur, defausse[rangDefausse].couleur);
+  rangDefausse++;
 }
 
 //mets la carte piochée dans le tapis
@@ -107,7 +116,7 @@ struct carte pioche(int afficher) {
   carte cartePioche = jeu[rang];
   // Affichage de la carte à l'indice généré aléatoirement
   if (afficher == 1) {
-    afficher_carte(cartePioche);
+    printf("%s %s\n", cartePioche.valeur, cartePioche.couleur);
   }
   //printf("\n%d\n", taillePioche);
   return cartePioche;
@@ -121,6 +130,19 @@ typedef struct joueur {
   int nbCartes;
 } joueur;
 
+void afficherMain(joueur *j) {
+  printf("Cartes de %s :\n { ", j->nom);
+  for (int i = 0; i < j->nbCartes; i++) {
+    if (i == j->nbCartes-1) {
+      afficher_carte(&j->main[i]);
+      printf(" }\n");
+      break;
+    }
+    afficher_carte(&j->main[i]);
+    printf(" | ");
+  }
+}
+
 void creationJoueur(joueur *j) {
   printf("Quel est votre nom ? ");
   scanf("%s", j->nom);
@@ -133,14 +155,7 @@ void creationJoueur(joueur *j) {
     j->main[i] = pioche(0);
   }
   // afficher sa main
-  printf("Cartes de %s :\n { ", j->nom);
-  for (int i = 0; i < j->nbCartes; i++) {
-    if (i == j->nbCartes-1) {
-      printf("%s %s }\n", j->main[i].valeur, j->main[i].couleur);
-      break;
-    }
-    printf("%s %s | ", j->main[i].valeur, j->main[i].couleur);
-  }
+  afficherMain(j);
 }
 
 // joueur pose une carte
@@ -148,7 +163,9 @@ void poseCarte(joueur *j) {
   int choix;
   printf("Quelle carte voulez vous jouer ? ");
   scanf("%d", &choix);
-  printf("Vous avez joué la carte %s %s\n", j->main[choix].valeur, j->main[choix].couleur);
+  printf("Vous avez joué la carte ");
+  afficher_carte(&j->main[choix]);
+  printf("\n");
   //mets la carte en question dans le tapis
   strcpy(tapis[1].valeur, j->main[choix].valeur);
   strcpy(tapis[1].couleur, j->main[choix].couleur);
@@ -160,30 +177,18 @@ void poseCarte(joueur *j) {
   }
   j->nbCartes--;
   // afficher sa main
-  printf("Cartes de %s :\n { ", j->nom);
-  for (int i = 0; i < j->nbCartes; i++) {
-    if (i == j->nbCartes-1) {
-      printf("%s %s }\n", j->main[i].valeur, j->main[i].couleur);
-      break;
-    }
-    printf("%s %s | ", j->main[i].valeur, j->main[i].couleur);
-  }
+  afficherMain(j);
 }
 
 // joueur pioche une carte
 void piocheCarte(joueur *j) {
   j->main[j->nbCartes] = pioche(0);
   j->nbCartes++;
-  printf("Vous avez pioché la carte : %s %s\n", j->main[j->nbCartes-1].valeur, j->main[j->nbCartes-1].couleur);
+  printf("Vous avez pioché la carte : ");
+  afficher_carte(&j->main[j->nbCartes-1]);
+  printf("\n");
   // afficher sa main
-  printf("Cartes de %s :\n { ", j->nom);
-  for (int i = 0; i < j->nbCartes; i++) {
-    if (i == j->nbCartes-1) {
-      printf("%s %s }\n", j->main[i].valeur, j->main[i].couleur);
-      break;
-    }
-    printf("%s %s | ", j->main[i].valeur, j->main[i].couleur);
-  }
+  afficherMain(j);
 }
 
 void initapis(){
@@ -195,6 +200,30 @@ void initapis(){
   tapisToDefausse();
 }
 
+void joueurJoue(joueur *j) {
+  int choix;
+  do {
+    printf("Que voulez vous faire ?\n\t 1. Poser une carte\n\t 2. Piocher une carte\n");
+    scanf("%d", &choix);
+  } while (choix != 1 && choix != 2);
+  switch (choix) {
+    case 1:
+      poseCarte(j);
+      break;
+    case 2:
+      piocheCarte(j);
+      break;
+    default:
+      printf("Erreur\n");
+      break;
+  }
+  if (j->nbCartes == 0) {
+    printf("Vous avez gagné %s !\n", j->nom);
+  }
+}
+
+
+
 int main() {
 
   creer_jeu();
@@ -203,20 +232,27 @@ int main() {
   supprCarteDePioche();
     
 
-   //Déclarez un joueur
-   int nbJoueur;
-   printf("Combien de joueurs ? ");
-   scanf("%d", &nbJoueur);
+  //Déclarez un joueur
+  int nbJoueur;
+  // liste des joueurs 
+  printf("Combien de joueurs ? ");
+  scanf("%d", &nbJoueur);
+  joueur joueurs[nbJoueur];
+  for (int i = 0; i < nbJoueur; i++) {
+    creationJoueur(&joueurs[i]);
+  }
 
   joueur j1;
   creationJoueur(&j1);
-  printf("j1 : %s\n", j1.nom);
   joueur j2;
   creationJoueur(&j2);
 
-  poseCarte(&j1);
-  piocheCarte(&j1);
   
+
+    
+
+
+  }
   
   //la meme avec la défausse
      //for (int i = 1; i < 108; i++) {
