@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <game.h>
+// #include <game.h>
+
+
+
 
 int main() {
     int choice;
@@ -16,6 +19,64 @@ int main() {
     switch(choice) {
         case 1 :
             printf("\n=== Début d'une nouvelle partie ===\n");
+            int cartesTotal = 108;
+            int cartesJoueur = 7;
+            int cartesoOrdi = 7;
+            int cartespioche = cartestotal - cartesjoueur - cartesordi;
+            int cartesJoueesJoueur = 0;
+            int cartesJoueesOrdi = 0;
+
+            int cartesJoueur[cartesJoueur];
+            int cartesOrdi[cartesOrdi];
+
+
+            // Initialisation du jeu
+            int jeu[cartesTotal];
+            for (int i = 0; i < cartesTotal; i++) {
+                jeu[i] = i;
+            }
+
+            // Mélange du jeu
+            for (int i = 0; i < cartesTotal; i++) {
+                int j = rand() % cartesTotal;
+                int temp = jeu[i];
+                jeu[i] = jeu[j];
+                jeu[j] = temp;
+            }
+
+            // Distribution des cartes
+            for (int i = 0; i < cartesJoueur; i++) {
+                cartesJoueur[i] = jeu[i];
+            }
+            for (int i = 0; i < cartesOrdi; i++) {
+                cartesOrdi[i] = jeu[i + cartesJoueur];
+            }
+
+            // Affichage des cartes du joueur
+            printf("Voici vos cartes :\n");
+            for (int i = 0; i < cartesJoueur; i++) {
+                printf("\t%d\n", cartesJoueur[i]);
+            }
+
+            // Affichage des cartes de l'ordinateur
+            printf("Voici les cartes de l'ordinateur :\n");
+            for (int i = 0; i < cartesOrdi; i++) {
+                printf("\t%d\n", cartesOrdi[i]);
+            }
+
+            // Affichage des cartes restantes
+            printf("Il reste %d cartes dans la pioche\n", cartespioche);
+
+            // Affichage des cartes jouées
+            printf("Il y a %d cartes jouées par le joueur\n", cartesJoueesJoueur);
+            printf("Il y a %d cartes jouées par l'ordinateur\n", cartesJoueesOrdi);
+
+            // Affichage du jeu
+            printf("Voici le jeu :\n");
+            for (int i = 0; i < cartesTotal; i++) {
+                printf("\t%d\n", jeu[i]);
+            }
+
             break;
         case 2 :
             printf("\n=== Reprise d'une partie à partir d'un fichier de sauvegarde ===\n");

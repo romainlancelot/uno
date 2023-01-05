@@ -15,7 +15,8 @@ char *couleurs[] = {"rouge", "jaune", "vert", "bleu", "joker"};
 int rang; //rang du tableau contenant les cartes
 int taillePioche = 108; //nb total de carte dans la pioche en début de partie
 carte jeu[108]; // Déclarer le tableau de cartes global afin qu'il soit accessible depuis main().
-carte defosse[108];
+carte defausse[108];
+carte tapis[1];
 
 void creer_jeu() {
   int quatuor, paire, i, j;
@@ -166,15 +167,28 @@ int main() {
   // int nbJoueur;
   // printf("Combien de joueurs ? ");
   // scanf("%d", &nbJoueur);
-
+  printf("--------------------\n");
   joueur j1;
   creationJoueur(&j1);
-  printf("j1 : %s\n", j1.nom);
+  printf("--------------------\n");
   joueur j2;
   creationJoueur(&j2);
+  printf("--------------------\n");
 
   poseCarte(&j1);
+  printf("--------------------\n");
   piocheCarte(&j1);
+  printf("--------------------\n");
+
+  do {
+    // tour du joueur 1
+    poseCarte(&j1);
+    printf("--------------------\n");
+    printf("--------------------\n");
+    // tour du joueur 2
+    poseCarte(&j2);
+    printf("--------------------\n");
+  } while (j1.nbCartes != 0 || j2.nbCartes != 0);
 
 
   // Affichez chaque élément du nouveau tableau (vérifier que l'ancienne carte est plus dedans)

@@ -13,6 +13,5 @@
 /* Types publiques du module */
 
 /* Variables publiques du module */
-/* création d'une liste */
 
 /* Fonctionnalités publiques du module */
