@@ -200,8 +200,29 @@ void initapis(){
   tapisToDefausse();
 }
 
-int main() {
+void joueurJoue (joueur *j) {
+  int choix;
+  do {
+    printf("Que voulez vous faire ?\n\t1. Poser une carte\n\t2. Piocher une carte\n");
+    scanf("%d", &choix);
+  } while (choix != 1 && choix != 2);
+  switch (choix) {
+    case 1:
+      poseCarte(j);
+      break;
+    case 2:
+      piocheCarte(j);
+      break;
+    default:
+      printf("Choix invalide\n");
+      break;
+  }
+  if (j->nbCartes == 0) {
+    printf("Vous avez gagné %s !\n", j->nom);
+  }
+}
 
+int main() {
   creer_jeu();
   initapis();
   // supprime la carte pioché de la pioche
@@ -209,19 +230,24 @@ int main() {
     
 
   //Déclarez un joueur
-  //  int nbJoueur;
-  //  printf("Combien de joueurs ? ");
-  //  scanf("%d", &nbJoueur);
+  int nbJoueur;
+  printf("Combien de joueurs ? ");
+  scanf("%d", &nbJoueur);
+  nbJoueur;
+  joueur joueurs[nbJoueur];
+  for (int i=0; i < nbJoueur; i++) {
+    creationJoueur(&joueurs[i]);
+  }
 
-  joueur j1;
-  creationJoueur(&j1);
-  printf("j1 : %s\n", j1.nom);
-  joueur j2;
-  creationJoueur(&j2);
-  printf("j2 : %s\n", j2.nom);
+  // joueur j1;
+  // creationJoueur(&j1);
+  // printf("j1 : %s\n", j1.nom);
+  // joueur j2;
+  // creationJoueur(&j2);
+  // printf("j2 : %s\n", j2.nom);
 
-  poseCarte(&j1);
-  piocheCarte(&j1);
+  // poseCarte(&j1);
+  // piocheCarte(&j1);
   
   
   //la meme avec la défausse
