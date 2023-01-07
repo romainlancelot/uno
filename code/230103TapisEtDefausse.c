@@ -143,19 +143,19 @@ void afficherMain(joueur *j) {
   }
 }
 
-void creationJoueur(joueur *j) {
-  printf("Quel est votre nom ? ");
+void creationJoueur(joueur *j, int nbJoueurs) {
+  printf("Quel est le nom du joueur %d ? ", nbJoueurs+1);
   scanf("%s", j->nom);
-  printf("Bienvenue %s !\n", j->nom);
+  // printf("Bienvenue %s !\n", j->nom);
   j->score = 0;
-  printf("Votre score est de %d\n", j->score);
+  // printf("Votre score est de %d\n", j->score);
   j->nbCartes = 7;
   // piocher 7 cartes
   for (int i = 0; i < j->nbCartes; i++) {
     j->main[i] = pioche(0);
   }
   // afficher sa main
-  afficherMain(j);
+  // afficherMain(j);
 }
 
 // joueur pose une carte
@@ -223,21 +223,60 @@ void joueurJoue (joueur *j) {
 }
 
 int main() {
+  int i;
   creer_jeu();
+    
+  printf("\e[1;1H\e[2J");
+  FILE * fichier = NULL;
+  if((fichier = fopen("welcome.txt", "r")) == NULL) {
+    printf("Impossible d'ouvrir le fichier welcome.txt\n");
+    exit(EXIT_FAILURE);
+  } else {
+    char c;
+    while((c = fgetc(fichier)) != EOF) {
+        printf("%c", c);
+    }
+    fclose(fichier);
+    fichier = NULL;
+  }
+
+  //Déclarez un joueur
+  int nbJoueur=0;
+  do {
+    printf("\n\nCombien y'a t'il de joueurs ? ");
+    scanf("%d", &nbJoueur);
+    if(nbJoueur < 2 || nbJoueur > 4) {
+      printf("Nombre de joueurs invalide (entre 2 et 4 joueurs)\n");
+    }
+  } while (nbJoueur < 2 || nbJoueur > 4);
+
+  joueur joueurs[nbJoueur];
+  for (i=0; i < nbJoueur; i++) {
+    printf("\e[1;1H\e[2J");
+    creationJoueur(&joueurs[i], i);
+  }
+  printf("\e[1;1H\e[2J");
+  for (i=0; i < nbJoueur; i++) {
+    printf("Joueur %d : %s !\n", i+1, joueurs[i].nom);
+    printf("Votre score est de %d\n", joueurs[i].score);
+    printf("Votre main est composée de : ");
+    afficherMain(&joueurs[i]);
+    if(i != nbJoueur-1) {
+      printf("\n\n -------------------------------------------- \n\n");
+    } else {
+      printf("\n\n");
+    }
+  }
+
+  do {
+    printf("Appuyez sur entrée pour commencer la partie\n");
+    getchar();
+  } while (getchar() != '\n');
+
+  printf("\e[1;1H\e[2J");
   initapis();
   // supprime la carte pioché de la pioche
   supprCarteDePioche();
-    
-
-  //Déclarez un joueur
-  int nbJoueur;
-  printf("Combien de joueurs ? ");
-  scanf("%d", &nbJoueur);
-  nbJoueur;
-  joueur joueurs[nbJoueur];
-  for (int i=0; i < nbJoueur; i++) {
-    creationJoueur(&joueurs[i]);
-  }
 
   // joueur j1;
   // creationJoueur(&j1);
