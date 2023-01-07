@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 
+#define CLEAR_SCREEN printf("\e[1;1H\e[2J");
 
 typedef struct carte {
   char valeur[10];
@@ -226,7 +227,7 @@ int main() {
   int i;
   creer_jeu();
     
-  printf("\e[1;1H\e[2J");
+  CLEAR_SCREEN;
   FILE * fichier = NULL;
   if((fichier = fopen("welcome.txt", "r")) == NULL) {
     printf("Impossible d'ouvrir le fichier welcome.txt\n");
@@ -252,10 +253,10 @@ int main() {
 
   joueur joueurs[nbJoueur];
   for (i=0; i < nbJoueur; i++) {
-    printf("\e[1;1H\e[2J");
+    CLEAR_SCREEN;
     creationJoueur(&joueurs[i], i);
   }
-  printf("\e[1;1H\e[2J");
+  CLEAR_SCREEN;
   for (i=0; i < nbJoueur; i++) {
     printf("Joueur %d : %s !\n", i+1, joueurs[i].nom);
     printf("Votre score est de %d\n", joueurs[i].score);
@@ -273,7 +274,8 @@ int main() {
     getchar();
   } while (getchar() != '\n');
 
-  printf("\e[1;1H\e[2J");
+  CLEAR_SCREEN;
+
   initapis();
   // supprime la carte pioché de la pioche
   supprCarteDePioche();
