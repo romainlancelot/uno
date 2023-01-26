@@ -89,15 +89,12 @@ int aleatoire(int *taillePioche) {
     *taillePioche = 108;
     rangDefausse = 0;
   }
-
-  printf("\ntaillepioche : %d\nrangdeffause :%d\n", *taillePioche, rangDefausse);
   // Initialisation du générateur de nombres aléatoires
   srand(time(NULL));
   // Génération d'un nombre aléatoire compris entre 0 et la taille de la pioche (inclus)
   int indice_aleatoire = rand() % (*taillePioche);
   // On décrémente la taille de la pioche
   *taillePioche = *taillePioche - 1;
-  printf("\ntaillepioche : %d\nrangdeffause :%d\n", *taillePioche, rangDefausse);
   return indice_aleatoire;
 }
 
@@ -111,17 +108,13 @@ int supprCarteDePioche(int *taillePioche) {
   }
   *jeu[*taillePioche].valeur = '\0';
   *jeu[*taillePioche].couleur = '\0';
-  
-  printf("taillepioche2 : %d\n", *taillePioche);
 }
 
 
 //mets la carte du tapis dans la défausse
 void tapisToDefausse() {
-  printf("tapisTodeffausse : %d\n",rangDefausse);
   defausse[rangDefausse] = tapis[1];
   //printf la carte défaussée
-  //printf("\ndefausse %d : %s %s\n", rangDefausse, defausse[rangDefausse].valeur, defausse[rangDefausse].couleur);
   supprCarteDePioche(&taillePioche);
   rangDefausse++;
 }
@@ -261,7 +254,7 @@ for (i = 0; i < 110; i++) {
 
   
   //la meme avec la défausse
-  for (int i = 0; i < 108; i++) {
+  for (i = 0; i < 108; i++) {
     printf("defausse[%d] = %s %s\n", i, defausse[i].valeur, defausse[i].couleur);
   }
   printf("%s %s\n\n", tapis[1].valeur, tapis[1].couleur);
