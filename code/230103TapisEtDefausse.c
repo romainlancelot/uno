@@ -148,6 +148,28 @@ void afficherMain(joueur *j) {
   }
 }
 
+void trierMain(joueur *j) {
+  // trier la main du joueur
+  int i, x;
+  carte temp;
+  for (i = 0; i < j->nbCartes; i++) {
+    for (x = i+1; x < j->nbCartes; x++) {
+      if (strcmp(j->main[i].couleur, j->main[x].couleur) > 0) {
+        temp = j->main[i];
+        j->main[i] = j->main[x];
+        j->main[x] = temp;
+      }
+      if (strcmp(j->main[i].couleur, j->main[x].couleur) == 0) {
+        if (strcmp(j->main[i].valeur, j->main[x].valeur) > 0) {
+          temp = j->main[i];
+          j->main[i] = j->main[x];
+          j->main[x] = temp;
+        }
+      }
+    }
+  }
+}
+
 void creationJoueur(joueur *j, int nbJoueurs) {
   printf("Quel est le nom du joueur %d ? ", nbJoueurs+1);
   scanf("%s", j->nom);
@@ -182,7 +204,7 @@ struct carte poseCarte(joueur *j, carte *tapis) {
         }
       } while (choixJoker < 1 || choixJoker > 4);
       switch (choixJoker) {
-        
+
 
       }
     } else if (strcmp(j->main[choix].couleur, tapis[1].couleur) != 0 && strcmp(j->main[choix].valeur, tapis[1].valeur) != 0) {
@@ -298,6 +320,14 @@ int main() {
   for (i=0; i < nbJoueur; i++) {
     printf("Joueur %d : %s !\n", i+1, joueurs[i].nom);
     printf("Votre score est de %d\n", joueurs[i].score);
+    afficherMain(&joueurs[i]);
+    if(i != nbJoueur-1) {
+      SEPARATEUR;
+    } else {
+      printf("\n\n");
+    }
+
+    trierMain(&joueurs[i]);
     afficherMain(&joueurs[i]);
     if(i != nbJoueur-1) {
       SEPARATEUR;
