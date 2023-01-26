@@ -15,16 +15,15 @@ char *valeurs[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "draw+2", "
 char *couleurs[] = {"rouge", "jaune", "vert", "bleu", "joker"};
 
 int rang; //rang du tableau contenant les cartes
-int rangDefausse = 1; //rang du tableau contenant les cartes défausse
+int rangDefausse = 0; //rang du tableau contenant les cartes défausse
 
 int taillePioche = 108; //nb total de carte dans la pioche en début de partie
 carte jeu[108]; // Déclarer le tableau de cartes global afin qu'il soit accessible depuis main().
-carte defausse[109];
+carte defausse[108];
 carte tapis[1];
 
 
 void creer_jeu() {
-    
   int quatuor, paire, i, j;
   int ind = 0;
   
@@ -58,20 +57,8 @@ void creer_jeu() {
   }
 }
 
-// fonction pour une carte aléatoire
-int aleatoire(int *taillePioche) {
-  // Initialisation du générateur de nombres aléatoires
-  srand(time(NULL));
-  // Génération d'un nombre aléatoire compris entre 0 et la taille de la pioche ( inclus)
-  int indice_aleatoire = rand() % (*taillePioche);
-  (*taillePioche) = (*taillePioche) -1;
-  //taillePioche == taillePioche -1;
-  return indice_aleatoire;
-}
-
 // print la carte
 int afficher_carte(carte *c) {
-// char *couleurs[] = {"rouge", "jaune", "vert", "bleu", "joker"};
   if (strcmp(c->couleur, "rouge") == 0) {
     printf("\033[0;31m%s %s\033[0m", c->valeur, c->couleur);
   } else if (strcmp(c->couleur, "jaune") == 0) {
@@ -87,6 +74,29 @@ int afficher_carte(carte *c) {
   }
 }
 
+void transfertdefaussetopioche(){
+  // copie colle le tableau des cartes de la défausse dans celui de la pioche 
+  for (int i = 0; i < 107; i++) {
+    jeu[i] = defausse[i];
+  }
+}
+
+// fonction pour une carte aléatoire
+int aleatoire(int *taillePioche) {
+    if (*taillePioche == 0) {
+    transfertdefaussetopioche();
+    *taillePioche = 108;
+    rangDefausse = 0;
+  }
+  // Initialisation du générateur de nombres aléatoires
+  srand(time(NULL));
+  // Génération d'un nombre aléatoire compris entre 0 et la taille de la pioche (inclus)
+  int indice_aleatoire = rand() % (*taillePioche);
+  // On décrémente la taille de la pioche
+  *taillePioche = *taillePioche - 1;
+  return indice_aleatoire;
+}
+
 int supprCarteDePioche() {
   // copie colle le tableau des cartes dans la pioche en enlevant l'élément pioché
   int j = 0;
@@ -95,21 +105,23 @@ int supprCarteDePioche() {
     jeu[j] = jeu[i];
     j++;
   }
+  *jeu[taillePioche].valeur = '\0';
+  *jeu[taillePioche].couleur = '\0';
 }
 
 //mets la carte du tapis dans la défausse
 void tapisToDefausse() {
   defausse[rangDefausse] = tapis[1];
   //printf la carte défaussée
-  //printf("\ndefausse %d : %s %s\n", rangDefausse, defausse[rangDefausse].valeur, defausse[rangDefausse].couleur);
+  supprCarteDePioche();
   rangDefausse++;
 }
 
 //mets la carte piochée dans le tapis
-void carteToTapis(){
-    tapis[1] = jeu[rang];
-    //printf la carte du tapis
-    //printf("\n\ntapis : %s %s\n", tapis[1].valeur, tapis[1].couleur);
+void carteToTapis() {
+  tapis[1] = jeu[rang];
+  // printf la carte du tapis
+  // printf("\n\ntapis : %s %s\n", tapis[1].valeur, tapis[1].couleur);
 }
 
 struct carte pioche(int afficher) {
@@ -286,6 +298,11 @@ void joueurJoue (joueur *j, int nbJoueurs, carte *tapis) {
 int main() {
   int i;
   creer_jeu();
+
+  // for (i = 0; i < 110; i++) { 
+  //   initapis();
+  //   printf("\n");
+  // }
     
   CLEAR_SCREEN;
   FILE * fichier = NULL;
@@ -370,22 +387,17 @@ int main() {
   
   
   //la meme avec la défausse
-  //for (int i = 1; i < 108; i++) {
-    //printf("defausse[%d] = %s %s\n", i, defausse[i].valeur, defausse[i].couleur);
-  //}
-  //printf("%s %s\n\n", tapis[1].valeur, tapis[1].couleur);
+  // for (i = 0; i < 108; i++) {
+  //   printf("defausse[%d] = %s %s\n", i, defausse[i].valeur, defausse[i].couleur);
+  // }
+  // printf("%s %s\n\n", tapis[1].valeur, tapis[1].couleur);
   // supprime la carte pioché de la pioche
 
-////////////////////
-
-  //printf("\n%d\n\n", rang);
-    
-  //Affichez chaque élément du nouveau tableau (vérifier que l'ancienne carte est plus dedans)
-  //for (int i = 0; i < (taillePioche); i++) {
-    //printf("jeu[%d] = %s %s\n", i, jeu[i].valeur, jeu[i].couleur);
-  //}
+  // for (int i = 0; i < 108; i++) {
+  //   printf("jeu[%d] = %s %s\n", i, jeu[i].valeur, jeu[i].couleur);
+  // }
    
-   //printf("%s %s\n\n", tapis[0].valeur, tapis[0].couleur);
+  // printf("%s %s\n\n", tapis[0].valeur, tapis[0].couleur);
 
   exit(EXIT_SUCCESS);
 }

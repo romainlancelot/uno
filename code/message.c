@@ -110,7 +110,6 @@ int supprCarteDePioche(int *taillePioche) {
   *jeu[*taillePioche].couleur = '\0';
 }
 
-
 //mets la carte du tapis dans la défausse
 void tapisToDefausse() {
   defausse[rangDefausse] = tapis[1];
