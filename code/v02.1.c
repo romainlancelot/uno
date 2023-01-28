@@ -185,9 +185,7 @@ void trierMain(joueur *j) {
 void creationJoueur(joueur *j, int nbJoueurs) {
   printf("Quel est le nom du joueur %d ? ", nbJoueurs+1);
   scanf("%s", j->nom);
-  // printf("Bienvenue %s !\n", j->nom);
   j->score = 0;
-  // printf("Votre score est de %d\n", j->score);
   j->nbCartes = 7;
   // piocher 7 cartes
   for (int i = 0; i < j->nbCartes; i++) {
@@ -216,28 +214,41 @@ struct carte poseCarte(joueur *j, carte *tapis) {
         }
       } while (choixJoker < 1 || choixJoker > 4);
       switch (choixJoker) {
-
-
+        case 1:
+          strcpy(j->main[choix].couleur, "rouge");
+          break;
+        case 2:
+          strcpy(j->main[choix].couleur, "jaune");
+          break;
+        case 3:
+          strcpy(j->main[choix].couleur, "vert");
+          break;
+        case 4:
+          strcpy(j->main[choix].couleur, "bleu");
+          break;
       }
+      break;
     } else if (strcmp(j->main[choix].couleur, tapis[1].couleur) != 0 && strcmp(j->main[choix].valeur, tapis[1].valeur) != 0) {
       printf("Vous ne pouvez pas poser cette carte...\n");
     }
   } while (choix < 0 || choix > j->nbCartes || strcmp(j->main[choix].couleur, tapis[1].couleur) != 0 && strcmp(j->main[choix].valeur, tapis[1].valeur) != 0);
   carte cartePosee = j->main[choix];
-  // printf("Vous avez joué la carte ");
-  // afficher_carte(&j->main[choix]);
-  // printf("\n");
+
   //mets la carte en question dans le tapis
   strcpy(tapis[1].valeur, j->main[choix].valeur);
   strcpy(tapis[1].couleur, j->main[choix].couleur);
+
   //mets la carte du tapis dans la défausse
   tapisToDefausse();
+
   // supprime la carte joué de la main du joueur
   for (int i = choix; i < j->nbCartes; i++) {
     j->main[i] = j->main[i+1];
   }
   j->nbCartes--;
+
   // afficher sa main
+  trierMain(j);
   afficherMain(j);
   return cartePosee;
 }
@@ -257,10 +268,42 @@ struct carte piocheCarte(joueur *j) {
 void initapis(){
   pioche(1);
   //mets la carte piochée dans le tableau du tapis
-  //printf("%d", rang);
   carteToTapis();
   //mets la carte du tapis dans la défausse
   tapisToDefausse();
+}
+
+void carteSpeciale (joueur *j, carte *tapis) {
+  int isSpecial = 0;
+
+  if (strcmp(tapis[1].valeur, "draw+2") == 0) {
+    printf("Le joueur précédent a joué un +2, voici vos 2 cartes !\n");
+    for (int i = 0; i < 2; i++) {
+      carte c = piocheCarte(j);
+      afficher_carte(&c);
+    }
+    isSpecial = 1;
+  }
+  if (strcmp(tapis[1].valeur, "draw+4") == 0) {
+    printf("Vous avez joué un +4 !");
+    for (int i = 0; i < 4; i++) {
+      carte c = piocheCarte(j);
+      afficher_carte(&c);
+    }
+    isSpecial = 1;
+  }
+  if (strcmp(tapis[1].valeur, "change") == 0) {
+    printf("Vous avez joué une carte de changement de sens !");
+    isSpecial = 1;
+  }
+  if (strcmp(tapis[1].valeur, "skip") == 0) {
+    printf("Vous avez joué une carte de passe ton tour !\n");
+    isSpecial = 1;
+  }
+
+  if (isSpecial == 1) {
+    SEPARATEUR;
+  }
 }
 
 void joueurJoue (joueur *j, int nbJoueurs, carte *tapis) {
@@ -282,6 +325,7 @@ void joueurJoue (joueur *j, int nbJoueurs, carte *tapis) {
       CLEAR_SCREEN;
       SEPARATEUR;
       carte cartePioche = piocheCarte(j);
+      trierMain(j);
       printf("Joueur %d (%s) a pioché la carte : ", nbJoueurs, j->nom);
       afficher_carte(&cartePioche);
       SEPARATEUR;
@@ -337,13 +381,6 @@ int main() {
   for (i=0; i < nbJoueur; i++) {
     printf("Joueur %d : %s !\n", i+1, joueurs[i].nom);
     printf("Votre score est de %d\n", joueurs[i].score);
-    afficherMain(&joueurs[i]);
-    if(i != nbJoueur-1) {
-      SEPARATEUR;
-    } else {
-      printf("\n\n");
-    }
-
     trierMain(&joueurs[i]);
     afficherMain(&joueurs[i]);
     if(i != nbJoueur-1) {
@@ -368,17 +405,13 @@ int main() {
 
   do {
     for (i=0; i < nbJoueur; i++) {
+      carteSpeciale(&joueurs[i], tapis);
       printf("Tour de joueur %d : %s !\n", i+1, joueurs[i].nom);
       afficherMain(&joueurs[i]);
       printf("\nCarte du tapis : ");
       afficher_carte(&tapis[1]);
       printf("\n\n");
       joueurJoue(&joueurs[i], i+1, tapis);
-      // if(i != nbJoueur-1) {
-        // SEPARATEUR;
-      // } else {
-        // printf("\n\n");
-      // }
     }
   } while (joueurs[0].nbCartes != 0 || joueurs[1].nbCartes != 0 || joueurs[2].nbCartes != 0 || joueurs[3].nbCartes != 0);
 
