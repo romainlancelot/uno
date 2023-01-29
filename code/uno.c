@@ -12,7 +12,7 @@ typedef struct carte {
   char couleur[10];
 } carte;
 
-//char *valeurs[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "draw+2", "inversion", "skip", "change", "draw+4"};
+// char *valeurs[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "draw+2", "inversion", "skip", "change", "draw+4"};
 char *valeurs[] = {"0", "1", "2", "3", "4", "5", "6", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip"};
 char *couleurs[] = {"rouge", "jaune", "vert", "bleu", "joker"};
 
@@ -23,7 +23,6 @@ int taillePioche = 108; //nb total de carte dans la pioche en début de partie
 carte jeu[108]; // Déclarer le tableau de cartes global afin qu'il soit accessible depuis main().
 carte defausse[108];
 carte tapis[1];
-int skipTurn = 0; //permet de vérifier si un joueur doit skip son tuor
 
 
 
@@ -277,7 +276,7 @@ void initapis(){
   tapisToDefausse();
 }
 
-void carteSpeciale (joueur *j, carte *tapis) {
+void carteSpeciale (joueur *j, carte *tapis, int *skipTurn) {
   int isSpecial = 0;
 
   if (strcmp(tapis[1].valeur, "draw+2") == 0) {
@@ -302,7 +301,7 @@ void carteSpeciale (joueur *j, carte *tapis) {
   }
   if (strcmp(tapis[1].valeur, "skip") == 0) {
     printf("Vous avez joué une carte de passe ton tour !");
-    skipTurn = 1;
+    *skipTurn = 1;
     isSpecial = 1;
   }
 
@@ -409,12 +408,13 @@ int main() {
   CLEAR_SCREEN;
 
   do {
+    int skipTurn = 0; //permet de vérifier si un joueur doit skip son tuor
     for (i=0; i < nbJoueur; i++) {
       if(skipTurn == 1) {
         skipTurn = 0;
       }
       else{
-        carteSpeciale(&joueurs[i], tapis);
+        carteSpeciale(&joueurs[i], tapis, &skipTurn);
         printf("Tour de joueur %d : %s !\n", i+1, joueurs[i].nom);
         afficherMain(&joueurs[i]);
         printf("\nCarte du tapis : ");
