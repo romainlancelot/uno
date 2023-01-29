@@ -297,7 +297,7 @@ void carteSpeciale (joueur *j, carte *tapis) {
     isSpecial = 1;
   }
   if (strcmp(tapis[1].valeur, "skip") == 0) {
-    printf("Vous avez joué une carte de passe ton tour !\n");
+    printf("Vous avez joué une carte de passe ton tour !");
     isSpecial = 1;
   }
 
