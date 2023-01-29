@@ -269,11 +269,13 @@ struct carte piocheCarte(joueur *j) {
 }
 
 void initapis(){
-  pioche(1);
-  //mets la carte piochée dans le tableau du tapis
-  carteToTapis();
-  //mets la carte du tapis dans la défausse
-  tapisToDefausse();
+  do {
+    pioche(1);
+    //mets la carte piochée dans le tableau du tapis
+    carteToTapis();
+    //mets la carte du tapis dans la défausse
+    tapisToDefausse();
+  } while (strcmp(tapis[1].valeur, "draw+2") == 0 || strcmp(tapis[1].valeur, "draw+4") == 0 || strcmp(tapis[1].valeur, "skip") == 0 || strcmp(tapis[1].valeur, "change") == 0 || strcmp(tapis[1].valeur, "skip") == 0 || strcmp(tapis[1].couleur, "joker") == 0);
 }
 
 void carteSpeciale (joueur *j, carte *tapis, int *skipTurn) {
@@ -407,11 +409,17 @@ int main() {
 
   CLEAR_SCREEN;
 
+  int skipTurn = 0; //permet de vérifier si un joueur doit skip son tuor
   do {
-    int skipTurn = 0; //permet de vérifier si un joueur doit skip son tuor
     for (i=0; i < nbJoueur; i++) {
-      if(skipTurn == 1) {
+      printf("skipTurn = %d\n", skipTurn);
+      if (skipTurn == 1) {
         skipTurn = 0;
+        printf("Tour de joueur %d : %s !\n", i+1, joueurs[i].nom);
+        printf("Votre tour a été sauté par le joueur précédent\n");
+        printf("Carte du tapis : ");
+        afficher_carte(&tapis[1]);
+        printf("\n\n");
       }
       else{
         carteSpeciale(&joueurs[i], tapis, &skipTurn);
