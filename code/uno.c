@@ -25,7 +25,6 @@ carte defausse[108];
 carte tapis[1];
 
 
-
 void creer_jeu() {
   int quatuor, paire, i, j;
   int ind = 0;
@@ -312,7 +311,7 @@ void carteSpeciale (joueur *j, carte *tapis, int *skipTurn) {
   }
 }
 
-void joueurJoue (joueur *j, int nbJoueurs, carte *tapis) {
+void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn) {
   int choix;
   do {
     printf("Que voulez vous faire ?\n\t1. Poser une carte\n\t2. Piocher une carte\n\n => ");
@@ -324,6 +323,11 @@ void joueurJoue (joueur *j, int nbJoueurs, carte *tapis) {
       CLEAR_SCREEN;
       SEPARATEUR;
       printf("Joueur %d (%s) a joué la carte : ", nbJoueurs, j->nom);
+      carteSpeciale(j, tapis, skipTurn);
+      if (*skipTurn == 1) {
+        skipTurn = 0;
+        printf("Votre tour a été sauté par le joueur %s\n", j->nom);
+      }
       afficher_carte(&cartePose);
       SEPARATEUR;
       break;
@@ -410,26 +414,19 @@ int main() {
   CLEAR_SCREEN;
 
   int skipTurn = 0; //permet de vérifier si un joueur doit skip son tuor
+
   do {
     for (i=0; i < nbJoueur; i++) {
-      printf("skipTurn = %d\n", skipTurn);
       if (skipTurn == 1) {
         skipTurn = 0;
-        printf("Tour de joueur %d : %s !\n", i+1, joueurs[i].nom);
-        printf("Votre tour a été sauté par le joueur précédent\n");
-        printf("Carte du tapis : ");
-        afficher_carte(&tapis[1]);
-        printf("\n\n");
+        continue;
       }
-      else{
-        carteSpeciale(&joueurs[i], tapis, &skipTurn);
-        printf("Tour de joueur %d : %s !\n", i+1, joueurs[i].nom);
-        afficherMain(&joueurs[i]);
-        printf("\nCarte du tapis : ");
-        afficher_carte(&tapis[1]);
-        printf("\n\n");
-        joueurJoue(&joueurs[i], i+1, tapis);
-      }
+      printf("Tour de joueur %d : %s !\n", i+1, joueurs[i].nom);
+      afficherMain(&joueurs[i]);
+      printf("\nCarte du tapis : ");
+      afficher_carte(&tapis[1]);
+      printf("\n\n");
+      joueurJoue(&joueurs[i], i+1, tapis, &skipTurn);
     }
   } while (joueurs[0].nbCartes != 0 || joueurs[1].nbCartes != 0 || joueurs[2].nbCartes != 0 || joueurs[3].nbCartes != 0);
 
