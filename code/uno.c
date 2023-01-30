@@ -143,22 +143,6 @@ typedef struct joueur {
   int nbCartes;
 } joueur;
 
-void afficherMain(joueur *j) {
-  printf("\n\nCartes de %s :\n\n { ", j->nom);
-  for (int i = 0; i < j->nbCartes; i++) {
-    if (i == j->nbCartes-1) {
-      printf("%d : ", i);
-      afficher_carte(&j->main[i]);
-      printf(" }\n");
-      break;
-    }
-    printf("%d : ", i);
-    afficher_carte(&j->main[i]);
-    printf(" | ");
-  }
-    printf("\n");
-}
-
 // trier la main du joueur
 void trierMain(joueur *j) {
   int i, x;
@@ -179,6 +163,23 @@ void trierMain(joueur *j) {
       }
     }
   }
+}
+
+void afficherMain(joueur *j) {
+  trierMain(j);
+  printf("\nCartes de %s :\n\n { ", j->nom);
+  for (int i = 0; i < j->nbCartes; i++) {
+    if (i == j->nbCartes-1) {
+      printf("%d : ", i);
+      afficher_carte(&j->main[i]);
+      printf(" }\n");
+      break;
+    }
+    printf("%d : ", i);
+    afficher_carte(&j->main[i]);
+    printf(" | ");
+  }
+  printf("\n");
 }
 
 void creationJoueur (joueur *j, int nbJoueurs) {
@@ -204,7 +205,7 @@ struct carte poseCarte(joueur *j, carte *tapis) {
     if (strcmp(j->main[choix].couleur, "joker") == 0 || strcmp(j->main[choix].valeur , "changer") == 0) {
       printf("Vous avez joué une carte changement de coueleur  !\nQuelle couleur voulez vous choisir ?\n");
       do {
-        printf("Possibilités : { 1 : rouge | 2 : jaune | 3 : vert | 4 : bleu }\n => ");
+        printf("Possibilités : { 1 : \033[0;31mrouge\033[0m | 2 : \033[0;33mjaune\033[0m | 3 : \033[0;32mvert\033[0m | 4 : \033[0;34mbleu\033[0m }\n => ");
         scanf("%d", &choixCouleur);
         if (choixCouleur < 1 || choixCouleur > 4) {
           printf("Veuillez choisir une couleur valide !\n");
@@ -244,8 +245,6 @@ struct carte poseCarte(joueur *j, carte *tapis) {
   }
   j->nbCartes--;
 
-  // afficher sa main
-  trierMain(j);
   afficherMain(j);
   return cartePosee;
 }
@@ -280,7 +279,7 @@ void carteSpeciale (joueur *j, carte *tapis, int *skipTurn, int *inversion) {
         printf(" | ");
       }
     }
-    printf(" }\n");
+    printf(" }\n\n");
     isSpecial = 1;
   }
   if (strcmp(tapis[1].valeur, "draw+4") == 0) {
@@ -328,12 +327,12 @@ void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inv
       CLEAR_SCREEN;
       SEPARATEUR;
       printf("Joueur %d (%s) a joué la carte : ", nbJoueurs, j->nom);
+      afficher_carte(&cartePose);
       carteSpeciale(j, tapis, skipTurn, inversion);
       if (*skipTurn == 1) {
         skipTurn = 0;
         printf("Votre tour a été sauté par le joueur %s\n", j->nom);
       }
-      afficher_carte(&cartePose);
       printf("\n\n");
       SEPARATEUR;
       break;
@@ -341,7 +340,6 @@ void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inv
       CLEAR_SCREEN;
       SEPARATEUR;
       carte cartePioche = piocheCarte(j);
-      trierMain(j);
       printf("Joueur %d (%s) a pioché la carte : ", nbJoueurs, j->nom);
       afficher_carte(&cartePioche);
       printf("\n\n");
@@ -380,10 +378,13 @@ int main() {
   }
 
   //Déclarez un joueur
+  char tmpNbJoueur[2];
   int nbJoueur=0;
   do {
     printf("\nBienvenue !\n\nCombien y'a t'il de joueurs ? ");
-    scanf("%d", &nbJoueur);
+    scanf("%s", tmpNbJoueur);
+    // vérifier que le caractere est bien un chiffre
+    nbJoueur = atoi(tmpNbJoueur);
     if (nbJoueur < 2 || nbJoueur > 4) {
       printf("Nombre de joueurs invalide (entre 2 et 4 joueurs)\n");
     }
@@ -398,7 +399,6 @@ int main() {
   for (i=0; i < nbJoueur; i++) {
     printf("Joueur %d : %s !\n", i+1, joueurs[i].nom);
     printf("Votre score est de %d\n", joueurs[i].score);
-    trierMain(&joueurs[i]);
     afficherMain(&joueurs[i]);
     if(i != nbJoueur-1) {
       SEPARATEUR;
