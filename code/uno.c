@@ -24,7 +24,7 @@ carte defausse[108];
 carte tapis[1];
 
 
-void creer_jeu() {
+void creer_jeu () {
   int quatuor, paire, i, j;
   int ind = 0;
   
@@ -75,7 +75,7 @@ int afficher_carte(carte *c) {
   }
 }
 
-void transfertdefaussetopioche(){
+void transfertDefausseToPioche () {
   // copie colle le tableau des cartes de la défausse dans celui de la pioche 
   for (int i = 0; i < 107; i++) {
     jeu[i] = defausse[i];
@@ -85,7 +85,7 @@ void transfertdefaussetopioche(){
 // fonction pour une carte aléatoire
 int aleatoire(int *taillePioche) {
     if (*taillePioche == 0) {
-    transfertdefaussetopioche();
+    transfertDefausseToPioche();
     *taillePioche = 108;
     rangDefausse = 0;
   }
@@ -121,8 +121,6 @@ void tapisToDefausse() {
 //mets la carte piochée dans le tapis
 void carteToTapis() {
   tapis[1] = jeu[rang];
-  // printf la carte du tapis
-  // printf("\n\ntapis : %s %s\n", tapis[1].valeur, tapis[1].couleur);
 }
 
 struct carte pioche(int afficher) {
@@ -134,7 +132,6 @@ struct carte pioche(int afficher) {
     afficher_carte(&cartePioche);
     printf("\n");
   }
-  //printf("\n%d\n", taillePioche);
   return cartePioche;
 }
 
@@ -162,8 +159,8 @@ void afficherMain(joueur *j) {
     printf("\n");
 }
 
+// trier la main du joueur
 void trierMain(joueur *j) {
-  // trier la main du joueur
   int i, x;
   carte temp;
   for (i = 0; i < j->nbCartes; i++) {
@@ -184,7 +181,7 @@ void trierMain(joueur *j) {
   }
 }
 
-void creationJoueur(joueur *j, int nbJoueurs) {
+void creationJoueur (joueur *j, int nbJoueurs) {
   printf("Quel est le nom du joueur %d ? ", nbJoueurs+1);
   scanf("%s", j->nom);
   j->score = 0;
@@ -193,29 +190,27 @@ void creationJoueur(joueur *j, int nbJoueurs) {
   for (int i = 0; i < j->nbCartes; i++) {
     j->main[i] = pioche(0);
   }
-  // afficher sa main
-  // afficherMain(j);
 }
 
 // joueur pose une carte
 struct carte poseCarte(joueur *j, carte *tapis) {
-  int choix, choixJoker;
+  int choix, choixCouleur;
   do {
     printf("\nQuelle carte voulez vous jouer ? ");
     scanf("%d", &choix);
     if (choix < 0 || choix > j->nbCartes) {
       printf("Veuillez choisir une carte valide !\n");
     }
-    if (strcmp(j->main[choix].couleur, "joker") == 0) {
-      printf("Vous avez joué un joker !\nQuelle couleur voulez vous choisir ?\n");
+    if (strcmp(j->main[choix].couleur, "joker") == 0 || strcmp(j->main[choix].valeur , "changer") == 0) {
+      printf("Vous avez joué une carte changement de coueleur  !\nQuelle couleur voulez vous choisir ?\n");
       do {
         printf("Possibilités : { 1 : rouge | 2 : jaune | 3 : vert | 4 : bleu }\n => ");
-        scanf("%d", &choixJoker);
-        if (choixJoker < 1 || choixJoker > 4) {
+        scanf("%d", &choixCouleur);
+        if (choixCouleur < 1 || choixCouleur > 4) {
           printf("Veuillez choisir une couleur valide !\n");
         }
-      } while (choixJoker < 1 || choixJoker > 4);
-      switch (choixJoker) {
+      } while (choixCouleur < 1 || choixCouleur > 4);
+      switch (choixCouleur) {
         case 1:
           strcpy(j->main[choix].couleur, "rouge");
           break;
@@ -259,15 +254,10 @@ struct carte poseCarte(joueur *j, carte *tapis) {
 struct carte piocheCarte(joueur *j) {
   j->main[j->nbCartes] = pioche(0);
   j->nbCartes++;
-  // printf("Vous avez pioché la carte : ");
-  // afficher_carte(&j->main[j->nbCartes-1]);
-  // printf("\n");
-  // afficher sa main
-  // afficherMain(j);
   return j->main[j->nbCartes-1];
 }
 
-void initapis(){
+void initTapis () {
   do {
     pioche(1);
     //mets la carte piochée dans le tableau du tapis
@@ -281,19 +271,29 @@ void carteSpeciale (joueur *j, carte *tapis, int *skipTurn, int *inversion) {
   int isSpecial = 0;
 
   if (strcmp(tapis[1].valeur, "draw+2") == 0) {
-    printf("Le joueur précédent a joué un +2, voici vos 2 cartes !\n");
+    printf("\nVoici vos 2 cartes :\n");
+    printf(" { ");
     for (int i = 0; i < 2; i++) {
       carte c = piocheCarte(j);
       afficher_carte(&c);
+      if (i != 1) {
+        printf(" | ");
+      }
     }
+    printf(" }\n");
     isSpecial = 1;
   }
   if (strcmp(tapis[1].valeur, "draw+4") == 0) {
-    printf("Vous avez joué un +4 !");
+    printf("\nVoici vos 4 cartes :\n");
+    printf(" { ");
     for (int i = 0; i < 4; i++) {
       carte c = piocheCarte(j);
       afficher_carte(&c);
+      if (i != 3) {
+        printf(" | ");
+      }
     }
+    printf(" }\n");
     isSpecial = 1;
   }
   /*if (strcmp(tapis[1].valeur, "change") == 0) {
@@ -361,13 +361,13 @@ int main() {
   creer_jeu();
 
   // for (i = 0; i < 110; i++) { 
-  //   initapis();
+  //   initTapis();
   //   printf("\n");
   // }
     
   CLEAR_SCREEN;
   FILE * fichier = NULL;
-  if((fichier = fopen("welcome.txt", "r")) == NULL) {
+  if ((fichier = fopen("welcome.txt", "r")) == NULL) {
     printf("Impossible d'ouvrir le fichier welcome.txt\n");
     exit(EXIT_FAILURE);
   } else {
@@ -384,7 +384,7 @@ int main() {
   do {
     printf("\nBienvenue !\n\nCombien y'a t'il de joueurs ? ");
     scanf("%d", &nbJoueur);
-    if(nbJoueur < 2 || nbJoueur > 4) {
+    if (nbJoueur < 2 || nbJoueur > 4) {
       printf("Nombre de joueurs invalide (entre 2 et 4 joueurs)\n");
     }
   } while (nbJoueur < 2 || nbJoueur > 4);
@@ -414,7 +414,7 @@ int main() {
 
   CLEAR_SCREEN;
 
-  initapis();
+  initTapis();
   // supprime la carte pioché de la pioche
   supprCarteDePioche();
 
