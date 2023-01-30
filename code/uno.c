@@ -2,18 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <stdbool.h>
 
 #define CLEAR_SCREEN printf("\e[1;1H\e[2J");
-#define SEPARATEUR printf("\n\n -------------------------------------------- \n\n");
+#define SEPARATEUR printf(" -------------------------------------------- \n\n");
 
 typedef struct carte {
   char valeur[10];
   char couleur[10];
 } carte;
 
-// char *valeurs[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "draw+2", "inversion", "skip", "change", "draw+4"};
-char *valeurs[] = {"0", "1", "2", "3", "4", "5", "6", "skip", "skip", "skip", "skip", "skip", "skip", "skip", "skip"};
+char *valeurs[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "draw+2", "inversion", "skip", "change", "draw+4"};
+//char *valeurs[] = {"0", "1", "2", "3", "skip", "skip", "skip", "skip", "skip", "inversion", "inversion", "inversion", "inversion", "inversion", "inversion"};
 char *couleurs[] = {"rouge", "jaune", "vert", "bleu", "joker"};
 
 int rang; //rang du tableau contenant les cartes
@@ -148,7 +147,7 @@ typedef struct joueur {
 } joueur;
 
 void afficherMain(joueur *j) {
-  printf("Cartes de %s :\n { ", j->nom);
+  printf("\n\nCartes de %s :\n\n { ", j->nom);
   for (int i = 0; i < j->nbCartes; i++) {
     if (i == j->nbCartes-1) {
       printf("%d : ", i);
@@ -160,6 +159,7 @@ void afficherMain(joueur *j) {
     afficher_carte(&j->main[i]);
     printf(" | ");
   }
+    printf("\n");
 }
 
 void trierMain(joueur *j) {
@@ -201,7 +201,7 @@ void creationJoueur(joueur *j, int nbJoueurs) {
 struct carte poseCarte(joueur *j, carte *tapis) {
   int choix, choixJoker;
   do {
-    printf("Quelle carte voulez vous jouer ? ");
+    printf("\nQuelle carte voulez vous jouer ? ");
     scanf("%d", &choix);
     if (choix < 0 || choix > j->nbCartes) {
       printf("Veuillez choisir une carte valide !\n");
@@ -274,10 +274,10 @@ void initapis(){
     carteToTapis();
     //mets la carte du tapis dans la défausse
     tapisToDefausse();
-  } while (strcmp(tapis[1].valeur, "draw+2") == 0 || strcmp(tapis[1].valeur, "draw+4") == 0 || strcmp(tapis[1].valeur, "skip") == 0 || strcmp(tapis[1].valeur, "change") == 0 || strcmp(tapis[1].valeur, "skip") == 0 || strcmp(tapis[1].couleur, "joker") == 0);
+  } while (strcmp(tapis[1].valeur, "draw+2") == 0 || strcmp(tapis[1].valeur, "draw+4") == 0 || strcmp(tapis[1].valeur, "skip") == 0 || strcmp(tapis[1].valeur, "inversion") == 0 || strcmp(tapis[1].valeur, "change") == 0 || strcmp(tapis[1].valeur, "skip") == 0 ||  strcmp(tapis[1].couleur, "joker") == 0);
 }
 
-void carteSpeciale (joueur *j, carte *tapis, int *skipTurn) {
+void carteSpeciale (joueur *j, carte *tapis, int *skipTurn, int *inversion) {
   int isSpecial = 0;
 
   if (strcmp(tapis[1].valeur, "draw+2") == 0) {
@@ -296,13 +296,18 @@ void carteSpeciale (joueur *j, carte *tapis, int *skipTurn) {
     }
     isSpecial = 1;
   }
-  if (strcmp(tapis[1].valeur, "change") == 0) {
+  /*if (strcmp(tapis[1].valeur, "change") == 0) {
     printf("Vous avez joué une carte de changement de sens !");
     isSpecial = 1;
-  }
+  }*/
   if (strcmp(tapis[1].valeur, "skip") == 0) {
     printf("Vous avez joué une carte de passe ton tour !");
     *skipTurn = 1;
+    isSpecial = 1;
+  }
+    if (strcmp(tapis[1].valeur, "inversion") == 0) {
+    printf("Vous avez joué une carte d'inversion !");
+    *inversion = *inversion + 1;	
     isSpecial = 1;
   }
 
@@ -311,7 +316,7 @@ void carteSpeciale (joueur *j, carte *tapis, int *skipTurn) {
   }
 }
 
-void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn) {
+void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inversion) {
   int choix;
   do {
     printf("Que voulez vous faire ?\n\t1. Poser une carte\n\t2. Piocher une carte\n\n => ");
@@ -323,12 +328,13 @@ void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn) {
       CLEAR_SCREEN;
       SEPARATEUR;
       printf("Joueur %d (%s) a joué la carte : ", nbJoueurs, j->nom);
-      carteSpeciale(j, tapis, skipTurn);
+      carteSpeciale(j, tapis, skipTurn, inversion);
       if (*skipTurn == 1) {
         skipTurn = 0;
         printf("Votre tour a été sauté par le joueur %s\n", j->nom);
       }
       afficher_carte(&cartePose);
+      printf("\n\n");
       SEPARATEUR;
       break;
     case 2:
@@ -338,6 +344,7 @@ void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn) {
       trierMain(j);
       printf("Joueur %d (%s) a pioché la carte : ", nbJoueurs, j->nom);
       afficher_carte(&cartePioche);
+      printf("\n\n");
       SEPARATEUR;
       break;
     default:
@@ -359,7 +366,7 @@ int main() {
   // }
     
   CLEAR_SCREEN;
-  /*FILE * fichier = NULL;
+  FILE * fichier = NULL;
   if((fichier = fopen("welcome.txt", "r")) == NULL) {
     printf("Impossible d'ouvrir le fichier welcome.txt\n");
     exit(EXIT_FAILURE);
@@ -370,12 +377,12 @@ int main() {
     }
     fclose(fichier);
     fichier = NULL;
-  }*/
+  }
 
   //Déclarez un joueur
   int nbJoueur=0;
   do {
-    printf("\n\nCombien y'a t'il de joueurs ? ");
+    printf("\nBienvenue !\n\nCombien y'a t'il de joueurs ? ");
     scanf("%d", &nbJoueur);
     if(nbJoueur < 2 || nbJoueur > 4) {
       printf("Nombre de joueurs invalide (entre 2 et 4 joueurs)\n");
@@ -413,20 +420,44 @@ int main() {
 
   CLEAR_SCREEN;
 
-  int skipTurn = 0; //permet de vérifier si un joueur doit skip son tuor
+  int skipTurn = 0; //permet de vérifier si un joueur doit skip son tour
+  int inversion = 0; //permet de vérifier le sens du tour
 
   do {
-    for (i=0; i < nbJoueur; i++) {
+    for (i=0; i < nbJoueur;) {
       if (skipTurn == 1) {
         skipTurn = 0;
+        if (inversion % 2 == 0) {
+          i++;
+          i = i%nbJoueur;
+        } else {
+          i--;
+          i = i%nbJoueur;
+          if (i < 0) {
+            i = nbJoueur + i;
+          }
+        }
         continue;
       }
       printf("Tour de joueur %d : %s !\n", i+1, joueurs[i].nom);
       afficherMain(&joueurs[i]);
+
       printf("\nCarte du tapis : ");
       afficher_carte(&tapis[1]);
+
       printf("\n\n");
-      joueurJoue(&joueurs[i], i+1, tapis, &skipTurn);
+      joueurJoue(&joueurs[i], i+1, tapis, &skipTurn, &inversion);
+
+      if (inversion % 2 == 0) {
+        i++;
+        i = i%nbJoueur;
+      } else {
+        i--;
+        i = i%nbJoueur;
+        if(i < 0){
+          i = nbJoueur + i;
+        }
+      }
     }
   } while (joueurs[0].nbCartes != 0 || joueurs[1].nbCartes != 0 || joueurs[2].nbCartes != 0 || joueurs[3].nbCartes != 0);
 
