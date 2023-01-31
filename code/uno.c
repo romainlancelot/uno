@@ -195,10 +195,17 @@ void creationJoueur (joueur *j, int nbJoueurs) {
 
 // joueur pose une carte
 struct carte poseCarte(joueur *j, carte *tapis) {
+  char tmpChoix[10];
   int choix, choixCouleur;
   do {
-    printf("\nQuelle carte voulez vous jouer ? ");
-    scanf("%d", &choix);
+    // printf("\nQuelle carte voulez vous jouer ? ('p' : annuler et piocher une carte)\n => ");
+    printf("\nQuelle carte voulez vous jouer ?\n => ");
+    scanf("%s", tmpChoix);
+    choix = atoi(tmpChoix);
+    // TODO
+    // if (strcmp(tmpChoix, "p") == 0) {
+
+    // }
     if (choix < 0 || choix > j->nbCartes) {
       printf("Veuillez choisir une carte valide !\n");
     }
@@ -266,56 +273,14 @@ void initTapis () {
   } while (strcmp(tapis[1].valeur, "draw+2") == 0 || strcmp(tapis[1].valeur, "draw+4") == 0 || strcmp(tapis[1].valeur, "skip") == 0 || strcmp(tapis[1].valeur, "inversion") == 0 || strcmp(tapis[1].valeur, "change") == 0 || strcmp(tapis[1].valeur, "skip") == 0 ||  strcmp(tapis[1].couleur, "joker") == 0);
 }
 
-void carteSpeciale (joueur *j, carte *tapis, int *skipTurn, int *inversion) {
-  int isSpecial = 0;
-
-  if (strcmp(tapis[1].valeur, "draw+2") == 0) {
-    printf("\nVoici vos 2 cartes :\n");
-    printf(" { ");
-    for (int i = 0; i < 2; i++) {
-      carte c = piocheCarte(j);
-      afficher_carte(&c);
-      if (i != 1) {
-        printf(" | ");
-      }
-    }
-    printf(" }\n\n");
-    isSpecial = 1;
-  }
-  if (strcmp(tapis[1].valeur, "draw+4") == 0) {
-    printf("\nVoici vos 4 cartes :\n");
-    printf(" { ");
-    for (int i = 0; i < 4; i++) {
-      carte c = piocheCarte(j);
-      afficher_carte(&c);
-      if (i != 3) {
-        printf(" | ");
-      }
-    }
-    printf(" }\n");
-    isSpecial = 1;
-  }
-  /*if (strcmp(tapis[1].valeur, "change") == 0) {
-    printf("Vous avez joué une carte de changement de sens !");
-    isSpecial = 1;
-  }*/
-  if (strcmp(tapis[1].valeur, "skip") == 0) {
-    printf("Vous avez joué une carte de passe ton tour !");
-    *skipTurn = 1;
-    isSpecial = 1;
-  }
-    if (strcmp(tapis[1].valeur, "inversion") == 0) {
-    printf("Vous avez joué une carte d'inversion !");
-    *inversion = *inversion + 1;	
-    isSpecial = 1;
-  }
-
-  if (isSpecial == 1) {
-    SEPARATEUR;
-  }
+void carteSpeciale (joueur *j, carte *tapis, int *skipTurn, int *inversion, int *draw) {
+  if (strcmp(tapis[1].valeur, "draw+2") == 0) { *draw = 2; }
+  if (strcmp(tapis[1].valeur, "draw+4") == 0) { *draw = 4; }
+  if (strcmp(tapis[1].valeur, "skip") == 0) { *skipTurn = 1; }
+  if (strcmp(tapis[1].valeur, "inversion") == 0) { *inversion = *inversion + 1;	}
 }
 
-void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inversion) {
+void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inversion, int *draw) {
   int choix;
   do {
     printf("Que voulez vous faire ?\n\t1. Poser une carte\n\t2. Piocher une carte\n\n => ");
@@ -328,18 +293,14 @@ void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inv
       SEPARATEUR;
       printf("Joueur %d (%s) a joué la carte : ", nbJoueurs, j->nom);
       afficher_carte(&cartePose);
-      carteSpeciale(j, tapis, skipTurn, inversion);
-      if (*skipTurn == 1) {
-        skipTurn = 0;
-        printf("Votre tour a été sauté par le joueur %s\n", j->nom);
-      }
+      carteSpeciale(j, tapis, skipTurn, inversion, draw);
       printf("\n\n");
       SEPARATEUR;
       break;
     case 2:
+      carte cartePioche = piocheCarte(j);
       CLEAR_SCREEN;
       SEPARATEUR;
-      carte cartePioche = piocheCarte(j);
       printf("Joueur %d (%s) a pioché la carte : ", nbJoueurs, j->nom);
       afficher_carte(&cartePioche);
       printf("\n\n");
@@ -422,6 +383,7 @@ int main() {
 
   int skipTurn = 0; //permet de vérifier si un joueur doit skip son tour
   int inversion = 0; //permet de vérifier le sens du tour
+  int draw = 0; //permet de vérifier si un joueur doit piocher une carte
 
   do {
     for (i=0; i < nbJoueur;) {
@@ -439,6 +401,26 @@ int main() {
         }
         continue;
       }
+
+      if (draw != 0) {
+        printf("Voici vos %d cartes :\n", draw);
+        printf(" { ");
+        for (int j = 0; j < draw; j++) {
+          carte c = piocheCarte(&joueurs[i]);
+          if (j == draw-1) {
+            printf("%d : ", j);
+            afficher_carte(&c);
+            printf(" }\n");
+            break;
+          }
+          printf("%d : ", j);
+          afficher_carte(&c);
+          printf(" | ");
+        }
+        printf("\n");
+        draw = 0;
+      }
+
       printf("Tour de joueur %d : %s !\n", i+1, joueurs[i].nom);
       afficherMain(&joueurs[i]);
 
@@ -446,7 +428,7 @@ int main() {
       afficher_carte(&tapis[1]);
 
       printf("\n\n");
-      joueurJoue(&joueurs[i], i+1, tapis, &skipTurn, &inversion);
+      joueurJoue(&joueurs[i], i+1, tapis, &skipTurn, &inversion, &draw);
 
       if (inversion % 2 == 0) {
         i++;
@@ -460,10 +442,6 @@ int main() {
       }
     }
   } while (joueurs[0].nbCartes != 0 || joueurs[1].nbCartes != 0 || joueurs[2].nbCartes != 0 || joueurs[3].nbCartes != 0);
-
-  // poseCarte(&j1);
-  // piocheCarte(&j1);
-  
   
   //la meme avec la défausse
   // for (i = 0; i < 108; i++) {
