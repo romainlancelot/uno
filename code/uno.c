@@ -10,6 +10,7 @@ typedef struct carte {
   char valeur[10];
   char couleur[10];
   int piocheVide;
+  int annuler;
 } carte;
 
 char *valeurs[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "draw+2", "inversion", "skip", "change", "draw+4"};
@@ -198,7 +199,7 @@ void creationJoueur (joueur *j, int nbJoueurs) {
   printf("Quel est le nom du joueur %d ? ", nbJoueurs+1);
   scanf("%s", j->nom);
   j->score = 0;
-  j->nbCartes = 2;
+  j->nbCartes = 7;
   // piocher 7 cartes
   for (int i = 0; i < j->nbCartes; i++) {
     j->main[i] = pioche(0);
@@ -211,14 +212,12 @@ struct carte poseCarte(joueur *j, carte *tapis) {
   char tmpChoix[10];
   int choix, choixCouleur;
   do {
-    // printf("\nQuelle carte voulez vous jouer ? ('p' : annuler et piocher une carte)\n => ");
-    printf("\nQuelle carte voulez vous jouer ?\n => ");
+    printf("\nQuelle carte voulez vous jouer ? ('q' : annuler)\n => ");
     scanf("%s", tmpChoix);
     choix = atoi(tmpChoix);
-    // TODO
-    // if (strcmp(tmpChoix, "p") == 0) {
-
-    // }
+    if (strcmp(tmpChoix, "q") == 0) {
+      return (carte) { .valeur = "", .couleur = "", .piocheVide = 0, .annuler = 1 };
+    }
     if (choix < 0 || choix > j->nbCartes) {
       printf("Veuillez choisir une carte valide !\n");
     }
@@ -307,6 +306,9 @@ int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inve
   switch (choix) {
     case 1:
       carte cartePose = poseCarte(j, tapis);
+      if (cartePose.annuler == 1) {
+        return 0;
+      }
       CLEAR_SCREEN;
       SEPARATEUR;
       printf("Joueur %d (%s) a joué la carte : ", nbJoueurs, j->nom);
