@@ -198,7 +198,7 @@ void creationJoueur (joueur *j, int nbJoueurs) {
   printf("Quel est le nom du joueur %d ? ", nbJoueurs+1);
   scanf("%s", j->nom);
   j->score = 0;
-  j->nbCartes = 7;
+  j->nbCartes = 2;
   // piocher 7 cartes
   for (int i = 0; i < j->nbCartes; i++) {
     j->main[i] = pioche(0);
@@ -333,7 +333,21 @@ int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inve
       break;
   }
   if (j->nbCartes == 0) {
-    printf("Vous avez gagné %s !\n", j->nom);
+    CLEAR_SCREEN;
+    printf("\n\n%s a gagné la partie  !\n\n", j->nom);
+    FILE * fichier = NULL;
+    if ((fichier = fopen("end.txt", "r")) == NULL) {
+      printf("Impossible d'ouvrir le fichier end.txt\n");
+      exit(EXIT_FAILURE);
+    } else {
+      char c;
+      while ((c = fgetc(fichier)) != EOF) {
+          printf("%c", c);
+      }
+      fclose(fichier);
+      fichier = NULL;
+    }
+    exit(EXIT_SUCCESS);
   }
   return 1;
 }
