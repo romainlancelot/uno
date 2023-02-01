@@ -357,11 +357,6 @@ int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inve
 int main() {
   int i;
   creer_jeu();
-
-  // for (i = 0; i < 110; i++) { 
-  //   initTapis();
-  //   printf("\n");
-  // }
     
   CLEAR_SCREEN;
   FILE * fichier = NULL;
