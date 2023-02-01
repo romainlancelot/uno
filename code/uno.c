@@ -9,10 +9,10 @@
 typedef struct carte {
   char valeur[10];
   char couleur[10];
+  int piocheVide;
 } carte;
 
 char *valeurs[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "draw+2", "inversion", "skip", "change", "draw+4"};
-//char *valeurs[] = {"0", "1", "2", "3", "skip", "skip", "skip", "skip", "skip", "inversion", "inversion", "inversion", "inversion", "inversion", "inversion"};
 char *couleurs[] = {"rouge", "jaune", "vert", "bleu", "joker"};
 
 int rang; //rang du tableau contenant les cartes
@@ -75,18 +75,27 @@ int afficher_carte(carte *c) {
   }
 }
 
-void transfertDefausseToPioche () {
-  // copie colle le tableau des cartes de la défausse dans celui de la pioche 
-  for (int i = 0; i < 107; i++) {
-    jeu[i] = defausse[i];
+int transfertDefausseToPioche () {
+  // si la défausse est vide, on ne fait rien (on ne peut pas transférer)
+  if (rangDefausse == 0) {
+    return 0;
   }
+  // copie colle le tableau des cartes de la défausse dans celui de la pioche
+  for (int i = 0; i < 108; i++) {
+    jeu[i] = defausse[i];
+    *defausse[i].valeur = '\0';
+    *defausse[i].couleur = '\0';
+  }
+  return 1;
 }
 
 // fonction pour une carte aléatoire
 int aleatoire(int *taillePioche) {
-    if (*taillePioche == 0) {
-    transfertDefausseToPioche();
-    *taillePioche = 108;
+  if (*taillePioche == 0) {
+    if (transfertDefausseToPioche() == 0) {
+      return -1;
+    }
+    *taillePioche = rangDefausse;
     rangDefausse = 0;
   }
   // Initialisation du générateur de nombres aléatoires
@@ -126,6 +135,9 @@ void carteToTapis() {
 struct carte pioche(int afficher) {
   // récupère un nb aléatoire
   rang = aleatoire(&taillePioche);
+  if (rang == -1) {
+    return (carte) { .valeur = "", .couleur = "", .piocheVide = 1 };
+  }
   carte cartePioche = jeu[rang];
   // Affichage de la carte à l'indice généré aléatoirement
   if (afficher == 1) {
@@ -190,6 +202,7 @@ void creationJoueur (joueur *j, int nbJoueurs) {
   // piocher 7 cartes
   for (int i = 0; i < j->nbCartes; i++) {
     j->main[i] = pioche(0);
+    supprCarteDePioche();
   }
 }
 
@@ -258,8 +271,13 @@ struct carte poseCarte(joueur *j, carte *tapis) {
 
 // joueur pioche une carte
 struct carte piocheCarte(joueur *j) {
-  j->main[j->nbCartes] = pioche(0);
+  carte cartePiochee = pioche(0);
+  if (cartePiochee.piocheVide == 1) {
+    return cartePiochee;
+  }
+  j->main[j->nbCartes] = cartePiochee;
   j->nbCartes++;
+  supprCarteDePioche();
   return j->main[j->nbCartes-1];
 }
 
@@ -280,7 +298,7 @@ void carteSpeciale (joueur *j, carte *tapis, int *skipTurn, int *inversion, int 
   if (strcmp(tapis[1].valeur, "inversion") == 0) { *inversion = *inversion + 1;	}
 }
 
-void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inversion, int *draw) {
+int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inversion, int *draw) {
   int choix;
   do {
     printf("Que voulez vous faire ?\n\t1. Poser une carte\n\t2. Piocher une carte\n\n => ");
@@ -299,6 +317,10 @@ void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inv
       break;
     case 2:
       carte cartePioche = piocheCarte(j);
+      if (cartePioche.piocheVide == 1) {
+        printf("\n /!\\ La pioche est vide, vous ne pouvez pas piocher de carte /!\\ \n");
+        return 0;
+      }
       CLEAR_SCREEN;
       SEPARATEUR;
       printf("Joueur %d (%s) a pioché la carte : ", nbJoueurs, j->nom);
@@ -313,6 +335,7 @@ void joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inv
   if (j->nbCartes == 0) {
     printf("Vous avez gagné %s !\n", j->nom);
   }
+  return 1;
 }
 
 int main() {
@@ -376,8 +399,6 @@ int main() {
   CLEAR_SCREEN;
 
   initTapis();
-  // supprime la carte pioché de la pioche
-  supprCarteDePioche();
 
   CLEAR_SCREEN;
 
@@ -427,8 +448,21 @@ int main() {
       printf("\nCarte du tapis : ");
       afficher_carte(&tapis[1]);
 
+      // //la meme avec la défausse
+      // for (int x = 0; x < 108; x++) {
+      //   printf("defausse[%d] = %s %s\n", x, defausse[x].valeur, defausse[x].couleur);
+      // }
+
+      // // supprime la carte pioché de la pioche
+      // for (int x = 0; x < 108; x++) {
+      //   printf("jeu[%d] = %s %s\n", x, jeu[x].valeur, jeu[x].couleur);
+      // }
+
       printf("\n\n");
-      joueurJoue(&joueurs[i], i+1, tapis, &skipTurn, &inversion, &draw);
+      int playSuccess = 0;
+      do {
+        playSuccess = joueurJoue(&joueurs[i], i+1, tapis, &skipTurn, &inversion, &draw);
+      } while (playSuccess != 1);
 
       if (inversion % 2 == 0) {
         i++;
@@ -443,18 +477,5 @@ int main() {
     }
   } while (joueurs[0].nbCartes != 0 || joueurs[1].nbCartes != 0 || joueurs[2].nbCartes != 0 || joueurs[3].nbCartes != 0);
   
-  //la meme avec la défausse
-  // for (i = 0; i < 108; i++) {
-  //   printf("defausse[%d] = %s %s\n", i, defausse[i].valeur, defausse[i].couleur);
-  // }
-  // printf("%s %s\n\n", tapis[1].valeur, tapis[1].couleur);
-  // supprime la carte pioché de la pioche
-
-  // for (int i = 0; i < 108; i++) {
-  //   printf("jeu[%d] = %s %s\n", i, jeu[i].valeur, jeu[i].couleur);
-  // }
-   
-  // printf("%s %s\n\n", tapis[0].valeur, tapis[0].couleur);
-
   exit(EXIT_SUCCESS);
 }
