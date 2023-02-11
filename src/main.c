@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "src/display_standars.h"
-#include "src/actions.h"
-#include "src/cards.h"
-#include "src/players.h"
+#include "include/display_standars.h"
+#include "include/actions.h"
+#include "include/cards.h"
+#include "include/players.h"
 
 
 int main() {
@@ -14,7 +14,7 @@ int main() {
     
   CLEAR_SCREEN;
   FILE * fichier = NULL;
-  if ((fichier = fopen("./text/welcome.txt", "r")) == NULL) {
+  if ((fichier = fopen("text/welcome.txt", "r")) == NULL) {
     printf("Impossible d'ouvrir le fichier welcome.txt\n");
     exit(EXIT_FAILURE);
   } else {

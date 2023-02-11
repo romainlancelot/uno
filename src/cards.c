@@ -46,16 +46,6 @@ void creer_jeu () {
   }
 }
 
-void initTapis () {
-  do {
-    pioche(1);
-    //mets la carte piochée dans le tableau du tapis
-    carteToTapis();
-    //mets la carte du tapis dans la défausse
-    tapisToDefausse();
-  } while (strcmp(tapis[1].valeur, "draw+2") == 0 || strcmp(tapis[1].valeur, "draw+4") == 0 || strcmp(tapis[1].valeur, "skip") == 0 || strcmp(tapis[1].valeur, "inversion") == 0 || strcmp(tapis[1].valeur, "change") == 0 || strcmp(tapis[1].valeur, "skip") == 0 ||  strcmp(tapis[1].couleur, "joker") == 0);
-}
-
 // print la carte
 int afficher_carte(carte *c) {
   if (strcmp(c->couleur, "rouge") == 0) {

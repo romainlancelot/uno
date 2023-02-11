@@ -1,4 +1,4 @@
-#include "../include/actions.h"
+#include "include/actions.h"
 /* Inclusion des déclarations du module */
 
 #include <stdio.h>
@@ -31,6 +31,66 @@ static int aleatoire(int *taillePioche) {
 
 
 /* Définistion des fonctionnalités annoncées par l'entête */
+void initTapis () {
+  do {
+    pioche(1);
+    //mets la carte piochée dans le tableau du tapis
+    carteToTapis();
+    //mets la carte du tapis dans la défausse
+    tapisToDefausse();
+  } while (strcmp(tapis[1].valeur, "draw+2") == 0 || strcmp(tapis[1].valeur, "draw+4") == 0 || strcmp(tapis[1].valeur, "skip") == 0 || strcmp(tapis[1].valeur, "inversion") == 0 || strcmp(tapis[1].valeur, "change") == 0 || strcmp(tapis[1].valeur, "skip") == 0 ||  strcmp(tapis[1].couleur, "joker") == 0);
+}
+
+void creationJoueur (joueur *j, int nbJoueurs) {
+  printf("Quel est le nom du joueur %d ? ", nbJoueurs+1);
+  scanf("%s", j->nom);
+  j->score = 0;
+  j->nbCartes = 7;
+  // piocher 7 cartes
+  for (int i = 0; i < j->nbCartes; i++) {
+    j->main[i] = pioche(0);
+    supprCarteDePioche();
+  }
+}
+
+// trier la main du joueur
+void trierMain(joueur *j) {
+  int i, x;
+  carte temp;
+  for (i = 0; i < j->nbCartes; i++) {
+    for (x = i+1; x < j->nbCartes; x++) {
+      if (strcmp(j->main[i].couleur, j->main[x].couleur) > 0) {
+        temp = j->main[i];
+        j->main[i] = j->main[x];
+        j->main[x] = temp;
+      }
+      if (strcmp(j->main[i].couleur, j->main[x].couleur) == 0) {
+        if (strcmp(j->main[i].valeur, j->main[x].valeur) > 0) {
+          temp = j->main[i];
+          j->main[i] = j->main[x];
+          j->main[x] = temp;
+        }
+      }
+    }
+  }
+}
+
+void afficherMain(joueur *j) {
+  trierMain(j);
+  printf("\nCartes de %s :\n\n { ", j->nom);
+  for (int i = 0; i < j->nbCartes; i++) {
+    if (i == j->nbCartes-1) {
+      printf("%d : ", i);
+      afficher_carte(&j->main[i]);
+      printf(" }\n");
+      break;
+    }
+    printf("%d : ", i);
+    afficher_carte(&j->main[i]);
+    printf(" | ");
+  }
+  printf("\n");
+}
 
 int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inversion, int *draw) {
   int choix;
@@ -73,7 +133,7 @@ int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inve
     CLEAR_SCREEN;
     printf("\n\n%s a gagné la partie  !\n\n", j->nom);
     FILE * fichier = NULL;
-    if ((fichier = fopen("end.txt", "r")) == NULL) {
+    if ((fichier = fopen("text/end.txt", "r")) == NULL) {
       printf("Impossible d'ouvrir le fichier end.txt\n");
       exit(EXIT_FAILURE);
     } else {
