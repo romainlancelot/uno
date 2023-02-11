@@ -8,6 +8,7 @@ executable
 
 # Compilation files
 *.gch
+*.o
 
 # temporary files
 *.tmp
