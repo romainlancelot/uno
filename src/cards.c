@@ -1,4 +1,4 @@
-#include "../include/cards.h"
+#include "include/cards.h"
 /* Inclusion des déclarations du module */
 
 #include <stdio.h>
@@ -7,6 +7,14 @@
 /* Autres inclusions */
 
 /* Définition des variables globales relatives au module */
+char *valeurs[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "draw+2", "inversion", "skip", "change", "draw+4"};
+char *couleurs[] = {"rouge", "jaune", "vert", "bleu", "joker"};
+int rang;
+int rangDefausse = 0;
+int taillePioche = 108;
+carte jeu[108];
+carte defausse[108];
+carte tapis[1];
 
 /* Fonctionnalité privée au module par le mot clé static */
 

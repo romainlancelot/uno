@@ -17,14 +17,14 @@ typedef struct carte {
 } carte;
 
 /* Variables publiques du module */
-char *valeurs[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "draw+2", "inversion", "skip", "change", "draw+4"};
-char *couleurs[] = {"rouge", "jaune", "vert", "bleu", "joker"};
-int rang; /* rang du tableau contenant les cartes */
-int rangDefausse = 0; /* rang du tableau contenant les cartes défausse */
-int taillePioche = 108; /* nb total de carte dans la pioche en début de partie */
-carte jeu[108]; /* Déclarer le tableau de cartes global afin qu'il soit accessible depuis main(). */
-carte defausse[108];
-carte tapis[1];
+extern char *valeurs[];
+extern char *couleurs[];
+extern int rang; // rang du tableau contenant les cartes
+extern int rangDefausse; // rang du tableau contenant les cartes défausse
+extern int taillePioche; // nb total de carte dans la pioche en début de partie
+extern carte jeu[108]; // Déclarer le tableau de cartes global afin qu'il soit accessible depuis main().
+extern carte defausse[108];
+extern carte tapis[1];
 
 /* Fonctionnalités publiques du module */
 extern void creer_jeu ();
