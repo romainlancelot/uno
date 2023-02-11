@@ -12,3 +12,4 @@ executable
 
 # temporary files
 *.tmp
+*.old
