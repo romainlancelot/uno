@@ -1,7 +1,7 @@
 CC = gcc
 # CFLAGS= -O2 -Wall -Wextra -Werror
 # CLIBS= -lm
-EXE = executable
+EXE = uno 
 OBJ = objects/
 INCL = include/
 FILEC = $(wildcard *.c)
