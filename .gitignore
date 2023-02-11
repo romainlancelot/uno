@@ -5,6 +5,7 @@
 a.out
 *.exe
 executable
+uno
 
 # Compilation files
 *.gch
