@@ -1,4 +1,4 @@
-// #include "include/server.h"
+#include "include/server.h"
 /* Inclusion des déclarations du module */
 
 #include <stdio.h>
@@ -15,15 +15,39 @@
 /* Définition des variables globales relatives au module */
 #define MAX_CLIENTS 4
 #define BUFFER_SIZE 1024
+int isServer;
+serverInfos partyServer;
 
 /* Fonctionnalité privée au module par le mot clé static */
 
-/* Définistion des fonctionnalités annoncées par l'entête */
+/* Définition des fonctionnalités annoncées par l'entête */
 
 // void endConnection(int sockerClient, int socketServer) {
 //     close(socketClient);
 //     close(socketServer);
 // }
+
+void createServer() {
+    printf("Entrez l'adresse IP du serveur : ");
+    scanf("%s", partyServer.ip);
+    printf("Entrez le port du serveur : ");
+    scanf("%d", &partyServer.port);
+
+    char tmpnbJoueurs[2];
+    do {
+        printf("\nBienvenue !\n\nCombien y'a t'il de joueurs ? ");
+        scanf("%s", tmpnbJoueurs);
+        // vérifier que le caractere est bien un chiffre
+        nbJoueurs = atoi(tmpnbJoueurs);
+        if (nbJoueurs < 2 || nbJoueurs > 4) {
+            printf("Nombre de joueurs invalide (entre 2 et 4 joueurs)\n");
+        }
+    } while (nbJoueurs < 2 || nbJoueurs > 4);
+    partyServer.nbClients = nbJoueurs;
+
+    partyServer.socketServer = startServer(partyServer.ip, partyServer.port);
+    connectClients(partyServer.socketServer, partyServer.nbClients);
+}
 
 int startServer(char *ip, int port) {
     int socketServer = socket(AF_INET, SOCK_STREAM, 0);
@@ -41,9 +65,6 @@ int startServer(char *ip, int port) {
     return socketServer;
 }
 
-// fonction qui va attendre le nombre de clients indiquer et leur demander leur prénom
-// puis les stocker dans un tableau de structure
-// puis les envoyer à tous les clients
 int connectClients(int socketServer, int nbClients) {
     int socketClient;
     struct sockaddr_in addClient;
