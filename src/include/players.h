@@ -19,6 +19,8 @@ typedef struct joueur {
 } joueur;
 
 /* Variables publiques du module */
+extern int nbJoueurs;
+extern joueur joueurs[];
 
 /* Fonctionnalités publiques du module */
 extern void initTapis ();

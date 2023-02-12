@@ -8,6 +8,8 @@
 /* Autres inclusions */
 
 /* Définition des variables globales relatives au module */
+int nbJoueurs;
+joueur joueurs[3];
 
 /* Fonctionnalité privée au module par le mot clé static */
 
@@ -41,7 +43,7 @@ void initTapis () {
   } while (strcmp(tapis[1].valeur, "draw+2") == 0 || strcmp(tapis[1].valeur, "draw+4") == 0 || strcmp(tapis[1].valeur, "skip") == 0 || strcmp(tapis[1].valeur, "inversion") == 0 || strcmp(tapis[1].valeur, "change") == 0 || strcmp(tapis[1].valeur, "skip") == 0 ||  strcmp(tapis[1].couleur, "joker") == 0);
 }
 
-void creationJoueur (joueur *j, int nbJoueurs) {
+void creationJoueur(joueur *j, int nbJoueurs) {
   printf("Quel est le nom du joueur %d ? ", nbJoueurs+1);
   scanf("%s", j->nom);
   j->score = 0;
