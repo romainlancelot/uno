@@ -11,11 +11,17 @@
 /* Macros publiques */
 
 /* Types publiques du module */
-
+typedef struct clientInfos {
+    joueur joueur;
+    char ip[16];
+    int port;
+    int socketClient;
+} clientInfos;
 
 /* Variables publiques du module */
 
 /* Fonctionnalités publiques du module */
+extern void createClient(clientInfos *cli);
 extern void startClient(char *ip, int port);
 
 #endif

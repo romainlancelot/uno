@@ -1,4 +1,4 @@
-// #include "include/client.h"
+#include "include/client.h"
 /* Inclusion des déclarations du module */
 
 #include <stdio.h>
@@ -17,6 +17,15 @@
 /* Fonctionnalité privée au module par le mot clé static */
 
 /* Définistion des fonctionnalités annoncées par l'entête */
+
+void createClient(clientInfos *cli) {
+    printf("Entrez l'adresse IP du serveur : ");
+    scanf("%s", cli->ip);
+    printf("Entrez le port du serveur : ");
+    scanf("%d", &cli->port);
+
+    startClient(cli->ip, cli->port);
+}
 
 void startClient(char *ip, int port) {
     int socketClient = socket(AF_INET, SOCK_STREAM, 0);
