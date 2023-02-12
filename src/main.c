@@ -5,7 +5,8 @@
 #include "include/display_standars.h"
 #include "include/cards.h"
 #include "include/players.h"
-
+#include "include/server.h"
+#include "include/client.h"
 
 int main() {
 	int i;
@@ -24,6 +25,86 @@ int main() {
 		fclose(fichier);
 		fichier = NULL;
 	}
+
+	int choice;
+    printf("==================================\n|| Bienvenue dans le jeu de UNO ||\n==================================\n\n");
+    printf("Que voulez-vous faire ?\n");
+    printf("\t1) Lancer une nouvelle partie\n");
+    printf("\t2) Voir les règles du jeu\n");
+    printf("\t3) Quitter\n"),
+    printf("Votre choix : ");
+    scanf("%d", &choice);
+
+    switch(choice) {
+        case 1 :
+            printf("\n=== Début d'une nouvelle partie ===\n");
+			printf("Voulez-vous jouer sur le même ordinateur ou sur en réseau ?\n");
+			printf("\t1) Même ordinateur\n");
+			printf("\t2) En réseau\n");
+			printf("Votre choix : ");
+			scanf("%d", &choice);
+			switch(choice) {
+				case 1 :
+					printf("\n=== Même ordinateur ===\n");
+					break;
+				case 2 :
+					printf("\n=== En réseau ===\n");
+					printf("Voulez-vous être le serveur ou le client ?\n");
+					printf("\t1) Serveur\n");
+					printf("\t2) Client\n");
+					printf("Votre choix : ");
+					scanf("%d", &choice);
+					char ip[16];
+					int port;
+					switch(choice) {
+						case 1 :
+							printf("\n=== Serveur ===\n");
+							printf("Entrez l'adresse IP du serveur : ");
+							scanf("%s", ip);
+							printf("Entrez le port du serveur : ");
+							scanf("%d", &port);
+							int socketServer = startServer(ip, port);
+							connectClients(socketServer, 1);
+							break;
+						case 2 :
+							printf("\n=== Client ===\n");
+							printf("Entrez l'adresse IP du serveur : ");
+							scanf("%s", ip);
+							printf("Entrez le port du serveur : ");
+							scanf("%d", &port);
+							startClient(ip, port);
+							break;
+						default :
+							printf("Choix invalide.\n");
+							exit(EXIT_FAILURE);
+					}
+				default :
+					printf("Choix invalide.\n");
+					exit(EXIT_FAILURE);
+			}
+			break;
+        case 2 :
+            printf("\n=== Règles du jeu ===\n");
+            FILE * fichier = NULL;
+            if((fichier = fopen("text/rules.txt", "r")) == NULL) {
+                printf("Impossible d'ouvrir le fichier rules.txt\n");
+                exit(EXIT_FAILURE);
+            } else {
+                char c;
+                while((c = fgetc(fichier)) != EOF) {
+                    printf("%c", c);
+                }
+                fclose(fichier);
+                fichier = NULL;
+            }
+            break;
+        case 3 :
+            printf("\nA bientôt !\n");
+            exit(EXIT_SUCCESS);
+        default :
+            printf("Choix invalide.\n");
+            exit(EXIT_FAILURE);
+    }
 
 	//Déclarez un joueur
 	char tmpNbJoueur[2];
