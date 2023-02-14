@@ -8,10 +8,6 @@
 /* Autres inclusions */
 
 /* Définition des variables globales relatives au module */
-int skipTurn = 0; //permet de vérifier si un joueur doit skip son tour
-int inversion = 0; //permet de vérifier le sens du tour
-int draw = 0; //permet de vérifier si un joueur doit piocher une carte
-int i;
 
 /* Fonctionnalité privée au module par le mot clé static */
 static void printWelcome() {
@@ -31,8 +27,11 @@ static void printWelcome() {
 }
 
 static int game() {
+	int skipTurn = 0; //permet de vérifier si un joueur doit skip son tour
+	int inversion = 0; //permet de vérifier le sens du tour
+	int draw = 0; //permet de vérifier si un joueur doit piocher une carte
 	do {
-		for (i=0; i < nbJoueurs;) {
+		for (int i=0; i < nbJoueurs;) {
 			if (skipTurn == 1) {
 				skipTurn = 0;
 				if (inversion % 2 == 0) {
@@ -47,7 +46,7 @@ static int game() {
 				}
 				continue;
 			}
-
+			
 			if (draw != 0) {
 				printf("Voici vos %d cartes :\n", draw);
 				printf(" { ");
@@ -117,12 +116,12 @@ static void setPlayers() {
             }
         } while (nbJoueurs < 2 || nbJoueurs > 4);
     }
-	for (i=0; i < nbJoueurs; i++) {
+	for (int i=0; i < nbJoueurs; i++) {
 		CLEAR_SCREEN;
 		creationJoueur(&joueurs[i], i);
 	}
 	CLEAR_SCREEN;
-	for (i=0; i < nbJoueurs; i++) {
+	for (int i=0; i < nbJoueurs; i++) {
 		printf("Joueur %d : %s !\n", i+1, joueurs[i].nom);
 		printf("Votre score est de %d\n", joueurs[i].score);
 		afficherMain(&joueurs[i]);

@@ -35,7 +35,7 @@ static int aleatoire(int *taillePioche) {
 /* Définistion des fonctionnalités annoncées par l'entête */
 void initTapis () {
   do {
-    pioche(1);
+    pioche(0);
     //mets la carte piochée dans le tableau du tapis
     carteToTapis();
     //mets la carte du tapis dans la défausse
