@@ -35,7 +35,7 @@ void createServer() {
 
     char tmpnbJoueurs[2];
     do {
-        printf("\nBienvenue !\n\nCombien y'a t'il de joueurs ? ");
+        printf("\nCombien y'a t'il de joueurs ? ");
         scanf("%s", tmpnbJoueurs);
         // vérifier que le caractere est bien un chiffre
         nbJoueurs = atoi(tmpnbJoueurs);
