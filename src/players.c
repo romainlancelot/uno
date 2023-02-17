@@ -99,7 +99,7 @@ int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inve
     scanf("%d", &choix);
   } while (choix != 1 && choix != 2);
   switch (choix) {
-    case 1:
+    case 1:{
       carte cartePose = poseCarte(j, tapis);
       if (cartePose.annuler == 1) {
         return 0;
@@ -111,8 +111,8 @@ int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inve
       carteSpeciale(j, tapis, skipTurn, inversion, draw);
       printf("\n\n");
       SEPARATEUR;
-      break;
-    case 2:
+      break;}
+    case 2:{
       carte cartePioche = piocheCarte(j);
       if (cartePioche.piocheVide == 1) {
         printf("\n /!\\ La pioche est vide, vous ne pouvez pas piocher de carte /!\\ \n");
@@ -124,7 +124,7 @@ int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inve
       afficher_carte(&cartePioche);
       printf("\n\n");
       SEPARATEUR;
-      break;
+      break;}
     default:
       printf("Choix invalide\n");
       break;
