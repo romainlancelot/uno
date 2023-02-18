@@ -8,6 +8,8 @@
 /* Autres inclusions */
 
 /* Définition des variables globales relatives au module */
+int nbJoueurs;
+joueur joueurs[3];
 
 /* Fonctionnalité privée au module par le mot clé static */
 
@@ -33,7 +35,7 @@ static int aleatoire(int *taillePioche) {
 /* Définistion des fonctionnalités annoncées par l'entête */
 void initTapis () {
   do {
-    pioche(1);
+    pioche(0);
     //mets la carte piochée dans le tableau du tapis
     carteToTapis();
     //mets la carte du tapis dans la défausse
@@ -41,7 +43,7 @@ void initTapis () {
   } while (strcmp(tapis[1].valeur, "draw+2") == 0 || strcmp(tapis[1].valeur, "draw+4") == 0 || strcmp(tapis[1].valeur, "skip") == 0 || strcmp(tapis[1].valeur, "inversion") == 0 || strcmp(tapis[1].valeur, "change") == 0 || strcmp(tapis[1].valeur, "skip") == 0 ||  strcmp(tapis[1].couleur, "joker") == 0);
 }
 
-void creationJoueur (joueur *j, int nbJoueurs) {
+void creationJoueur(joueur *j, int nbJoueurs) {
   printf("Quel est le nom du joueur %d ? ", nbJoueurs+1);
   scanf("%s", j->nom);
   j->score = 0;
