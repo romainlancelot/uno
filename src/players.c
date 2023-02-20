@@ -31,6 +31,26 @@ static int aleatoire(int *taillePioche) {
 	return indice_aleatoire;
 }
 
+static void checkWin(joueur *j) {
+	if (j->nbCartes == 0) {
+		CLEAR_SCREEN;
+		printf("\n\n%s a gagné la partie  !\n\n", j->nom);
+		FILE * fichier = NULL;
+		if ((fichier = fopen("text/end.txt", "r")) == NULL) {
+			printf("Impossible d'ouvrir le fichier end.txt\n");
+			exit(EXIT_FAILURE);
+		} else {
+			char c;
+			while ((c = fgetc(fichier)) != EOF) {
+				printf("%c", c);
+			}
+			fclose(fichier);
+			fichier = NULL;
+		}
+		exit(EXIT_SUCCESS);
+	}
+}
+
 
 /* Définistion des fonctionnalités annoncées par l'entête */
 void initTapis () {
@@ -109,7 +129,103 @@ void afficherMain(joueur *j) {
 }
 
 int botJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inversion, int *draw) {
+	for (int i=0; i < j->nbCartes; i++) {
+		// si le bot a une carte qui correspond à la carte du tapis il la joue
+		if (strcmp(j->main[i].valeur, tapis[1].valeur) == 0 || strcmp(j->main[i].couleur, tapis[1].couleur) == 0) {
+			//mets la carte en question dans le tapis
+			strcpy(tapis[1].valeur, j->main[i].valeur);
+			strcpy(tapis[1].couleur, j->main[i].couleur);
 
+			//mets la carte du tapis dans la défausse
+			tapisToDefausse();
+
+			// supprime la carte joué de la main du joueur
+			for (int x = i; x < j->nbCartes; x++) {
+				j->main[x] = j->main[x+1];
+			}
+			j->nbCartes--;
+			CLEAR_SCREEN;
+			SEPARATEUR;
+			printf("Joueur %d (%s) a joué la carte : ", nbJoueurs, j->nom);
+			afficher_carte(&tapis[1]);
+			carteSpeciale(j, tapis, skipTurn, inversion, draw);
+			printf("\n\n");
+			SEPARATEUR;
+			checkWin(j);
+			return 1;
+		}
+		if (strcmp(j->main[i].couleur, "change") == 0 || strcmp(j->main[i].couleur, "draw+4") == 0) {
+			// compter de quel couleur il y a le plus de carte dans la main du joueur
+			int nbRouge = 0;
+			int nbBleu = 0;
+			int nbVert = 0;
+			int nbJaune = 0;
+			for (int x = 0; x < j->nbCartes; x++) {
+				if (strcmp(j->main[x].couleur, "rouge") == 0) {
+					nbRouge++;
+				}
+				if (strcmp(j->main[x].couleur, "bleu") == 0) {
+					nbBleu++;
+				}
+				if (strcmp(j->main[x].couleur, "vert") == 0) {
+					nbVert++;
+				}
+				if (strcmp(j->main[x].couleur, "jaune") == 0) {
+					nbJaune++;
+				}
+			}
+			// comparaison du plus grand nomobre de carte
+			if (nbRouge > nbBleu && nbRouge > nbVert && nbRouge > nbJaune) {
+				strcpy(j->main[i].couleur, "rouge");
+			}
+			if (nbBleu > nbRouge && nbBleu > nbVert && nbBleu > nbJaune) {
+				strcpy(j->main[i].couleur, "bleu");
+			}
+			if (nbVert > nbRouge && nbVert > nbBleu && nbVert > nbJaune) {
+				strcpy(j->main[i].couleur, "vert");
+			}
+			if (nbJaune > nbRouge && nbJaune > nbBleu && nbJaune > nbVert) {
+				strcpy(j->main[i].couleur, "jaune");
+			}
+
+			//mets la carte en question dans le tapis
+			strcpy(tapis[1].valeur, j->main[i].valeur);
+			strcpy(tapis[1].couleur, j->main[i].couleur);
+
+			//mets la carte du tapis dans la défausse
+			tapisToDefausse();
+
+			// supprime la carte joué de la main du joueur
+			for (int x = i; x < j->nbCartes; x++) {
+				j->main[x] = j->main[x+1];
+			}
+			j->nbCartes--;
+			CLEAR_SCREEN;
+			SEPARATEUR;
+			printf("Joueur %d (%s) a joué la carte : ", nbJoueurs, j->nom);
+			afficher_carte(&tapis[1]);
+			carteSpeciale(j, tapis, skipTurn, inversion, draw);
+			printf("\n\n");
+			SEPARATEUR;
+			checkWin(j);
+			return 1;
+		}
+	}
+
+	// si le bot n'a pas de carte qui correspond à la carte du tapis il pioche
+	carte cartePioche = piocheCarte(j);
+	if (cartePioche.piocheVide == 1) {
+		printf("\n /!\\ La pioche est vide, vous ne pouvez pas piocher de carte (si vous arrivez à cette erreur vous tombez dans une boucle infini et c'est pas normal j'espère que vous ne verez jamais cette ligne) /!\\ \n");
+		return 0;
+	}
+	CLEAR_SCREEN;
+	SEPARATEUR;
+	printf("Joueur %d (%s) a pioché la carte : ", nbJoueurs, j->nom);
+	afficher_carte(&cartePioche);
+	printf("\n\n");
+	SEPARATEUR;
+	checkWin(j);
+	return 1;
 }
 
 int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inversion, int *draw) {
@@ -149,23 +265,7 @@ int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inve
 			printf("Choix invalide\n");
 			break;
 	}
-	if (j->nbCartes == 0) {
-		CLEAR_SCREEN;
-		printf("\n\n%s a gagné la partie  !\n\n", j->nom);
-		FILE * fichier = NULL;
-		if ((fichier = fopen("text/end.txt", "r")) == NULL) {
-			printf("Impossible d'ouvrir le fichier end.txt\n");
-			exit(EXIT_FAILURE);
-		} else {
-			char c;
-			while ((c = fgetc(fichier)) != EOF) {
-				printf("%c", c);
-			}
-			fclose(fichier);
-			fichier = NULL;
-		}
-		exit(EXIT_SUCCESS);
-	}
+	checkWin(j);
 	return 1;
 	}
 
