@@ -229,66 +229,12 @@ int botJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inversi
 }
 
 int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inversion, int *draw) {
-  int choix;
-  char charchoix[10];
-  do {
-    printf("Que voulez vous faire ?\n\t1. Poser une carte\n\t2. Piocher une carte\n\n => ");
-    scanf("%s", charchoix);
-    choix = atoi(charchoix);
-  } while (choix != 1 && choix != 2);
-  switch (choix) {
-    case 1:{
-      carte cartePose = poseCarte(j, tapis);
-      if (cartePose.annuler == 1) {
-        return 0;
-      }
-      CLEAR_SCREEN;
-      SEPARATEUR;
-      printf("Joueur %d (%s) a joué la carte : ", nbJoueurs, j->nom);
-      afficher_carte(&cartePose);
-      carteSpeciale(j, tapis, skipTurn, inversion, draw);
-      printf("\n\n");
-      SEPARATEUR;
-      break;}
-    case 2:{
-      carte cartePioche = piocheCarte(j);
-      if (cartePioche.piocheVide == 1) {
-        printf("\n /!\\ La pioche est vide, vous ne pouvez pas piocher de carte /!\\ \n");
-        return 0;
-      }
-      CLEAR_SCREEN;
-      SEPARATEUR;
-      printf("Joueur %d (%s) a pioché la carte : ", nbJoueurs, j->nom);
-      afficher_carte(&cartePioche);
-      printf("\n\n");
-      SEPARATEUR;
-      break;}
-    default:
-      printf("Choix invalide\n");
-      break;
-  }
-  if (j->nbCartes == 0) {
-    CLEAR_SCREEN;
-    printf("\n\n%s a gagné la partie  !\n\n", j->nom);
-    FILE * fichier = NULL;
-    if ((fichier = fopen("text/end.txt", "r")) == NULL) {
-      printf("Impossible d'ouvrir le fichier end.txt\n");
-      exit(EXIT_FAILURE);
-    } else {
-      char c;
-      while ((c = fgetc(fichier)) != EOF) {
-          printf("%c", c);
-      }
-      fclose(fichier);
-      fichier = NULL;
-    }
-    exit(EXIT_SUCCESS);
-  }
-  return 1;
 	int choix;
+	char charchoix[10];
 	do {
 		printf("Que voulez vous faire ?\n\t1. Poser une carte\n\t2. Piocher une carte\n\n => ");
-		scanf("%d", &choix);
+		scanf("%s", charchoix);
+		choix = atoi(charchoix);
 	} while (choix != 1 && choix != 2);
 	switch (choix) {
 		case 1:
