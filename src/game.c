@@ -27,10 +27,10 @@ static void printWelcome() {
 }
 
 static int game() {
-	int skipTurn = 0; //permet de vérifier si un joueur doit skip son tour
-	int inversion = 0; //permet de vérifier le sens du tour
-	int draw = 0; //permet de vérifier si un joueur doit piocher une carte
 	do {
+		int skipTurn = 0; //permet de vérifier si un joueur doit skip son tour
+		int inversion = 0; //permet de vérifier le sens du tour
+		int draw = 0; //permet de vérifier si un joueur doit piocher une carte
 		for (int i=0; i < nbJoueurs;) {
 			if (skipTurn == 1) {
 				skipTurn = 0;
@@ -46,7 +46,7 @@ static int game() {
 				}
 				continue;
 			}
-			
+				
 			if (draw != 0) {
 				printf("Voici vos %d cartes :\n", draw);
 				printf(" { ");
@@ -89,17 +89,112 @@ static int game() {
 			} while (playSuccess != 1);
 
 			if (inversion % 2 == 0) {
+					i++;
+					i = i%nbJoueurs;
+				} else {
+					i--;
+					i = i%nbJoueurs;
+					if(i < 0){
+						i = nbJoueurs + i;
+					}
+				}
+		}
+	} while (joueurs[0].nbCartes != 0 || joueurs[1].nbCartes != 0 || joueurs[2].nbCartes != 0 || joueurs[3].nbCartes != 0);
+}
+
+static int gameAlone() {
+	do {
+		int skipTurn = 0; //permet de vérifier si un joueur doit skip son tour
+		int inversion = 0; //permet de vérifier le sens du tour
+		int draw = 0; //permet de vérifier si un joueur doit piocher une carte
+		nbJoueurs = 2;
+		for (int i=0; i < nbJoueurs;) {
+			if (skipTurn == 1) {
+				skipTurn = 0;
+				if (inversion % 2 == 0) {
+					i++;
+					i = i%nbJoueurs;
+				} else {
+					i--;
+					i = i%nbJoueurs;
+					if (i < 0) {
+						i = nbJoueurs + i;
+					}
+				}
+				continue;
+			}
+				
+			if (draw != 0) {
+				printf("Voici vos %d cartes :\n", draw);
+				printf(" { ");
+				for (int j = 0; j < draw; j++) {
+					carte c = piocheCarte(&joueurs[i]);
+					if (j == draw-1) {
+						printf("%d : ", j);
+						afficher_carte(&c);
+						printf(" }\n");
+						break;
+					}
+					printf("%d : ", j);
+					afficher_carte(&c);
+					printf(" | ");
+				}
+				printf("\n");
+				draw = 0;
+			}
+
+			printf("Tour de joueur %d : %s !\n", i+1, joueurs[i].nom);
+			printf("isBot : %d\n", joueurs[i].isBot);
+			afficherMain(&joueurs[i]);
+
+			printf("\nCarte du tapis : ");
+			afficher_carte(&tapis[1]);
+
+			// //la meme avec la défausse
+			// for (int x = 0; x < 108; x++) {
+			//   printf("defausse[%d] = %s %s\n", x, defausse[x].valeur, defausse[x].couleur);
+			// }
+
+			// // supprime la carte pioché de la pioche
+			// for (int x = 0; x < 108; x++) {
+			//   printf("jeu[%d] = %s %s\n", x, jeu[x].valeur, jeu[x].couleur);
+			// }
+
+			printf("\n\n");
+			if (joueurs[i].isBot == 1) {
+				botJoue(&joueurs[i], i+1, tapis, &skipTurn, &inversion, &draw);
+			} else {
+				int playSuccess = 0;
+				do {
+					playSuccess = joueurJoue(&joueurs[i], i+1, tapis, &skipTurn, &inversion, &draw);
+				} while (playSuccess != 1);
+			}
+
+			if (inversion % 2 == 0) {
 				i++;
 				i = i%nbJoueurs;
 			} else {
 				i--;
 				i = i%nbJoueurs;
-				if(i < 0){
+				if (i < 0){
 					i = nbJoueurs + i;
 				}
 			}
 		}
-	} while (joueurs[0].nbCartes != 0 || joueurs[1].nbCartes != 0 || joueurs[2].nbCartes != 0 || joueurs[3].nbCartes != 0);
+	} while (joueurs[0].nbCartes != 0 || joueurs[1].nbCartes != 0);
+}
+
+static void startGameAlone() {
+    printf("Joueur %d : %s !\n", 1, joueurs[0].nom);
+    printf("Votre score est de %d\n", joueurs[0].score);
+    afficherMain(&joueurs[0]);
+
+	do {
+		printf("Appuyez sur entrée pour commencer la partie\n");
+		getchar();
+	} while (getchar() != '\n');
+	CLEAR_SCREEN;
+    gameAlone();
 }
 
 static void setPlayers() {
@@ -111,11 +206,18 @@ static void setPlayers() {
             scanf("%s", tmpnbJoueurs);
             // vérifier que le caractere est bien un chiffre
             nbJoueurs = atoi(tmpnbJoueurs);
-            if (nbJoueurs < 2 || nbJoueurs > 4) {
-                printf("Nombre de joueurs invalide (entre 2 et 4 joueurs)\n");
+            if (nbJoueurs < 1 || nbJoueurs > 4) {
+                printf("Nombre de joueurs invalide (entre 1 et 4 joueurs)\n");
             }
-        } while (nbJoueurs < 2 || nbJoueurs > 4);
+        } while (nbJoueurs < 1 || nbJoueurs > 4);
     }
+	if (nbJoueurs == 1) {
+		CLEAR_SCREEN;
+		printf("Vous jouez seul contre l'ordi eheh\n\n");
+		creationJoueur(&joueurs[0], 0);
+		creationBot(&joueurs[1]);
+		startGameAlone();
+	}
 	for (int i=0; i < nbJoueurs; i++) {
 		CLEAR_SCREEN;
 		creationJoueur(&joueurs[i], i);
@@ -125,12 +227,16 @@ static void setPlayers() {
 		printf("Joueur %d : %s !\n", i+1, joueurs[i].nom);
 		printf("Votre score est de %d\n", joueurs[i].score);
 		afficherMain(&joueurs[i]);
-		if(i != nbJoueurs-1) {
-		SEPARATEUR;
+		if(i != nbJoueurs-2) {
+			SEPARATEUR;
 		} else {
 			printf("\n\n");
 		}
 	}
+	do {
+		printf("Appuyez sur entrée pour commencer la partie\n");
+		getchar();
+	} while (getchar() != '\n');
 	CLEAR_SCREEN;
     game();
 }
