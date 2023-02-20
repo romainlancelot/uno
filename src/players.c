@@ -267,9 +267,9 @@ int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inve
 	}
 	checkWin(j);
 	return 1;
-	}
+}
 
-	void carteSpeciale (joueur *j, carte *tapis, int *skipTurn, int *inversion, int *draw) {
+void carteSpeciale (joueur *j, carte *tapis, int *skipTurn, int *inversion, int *draw) {
 	if (strcmp(tapis[1].valeur, "draw+2") == 0) { *draw = 2; }
 	if (strcmp(tapis[1].valeur, "draw+4") == 0) { *draw = 4; }
 	if (strcmp(tapis[1].valeur, "skip") == 0) { *skipTurn = 1; }
