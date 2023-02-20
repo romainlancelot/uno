@@ -15,6 +15,8 @@ int main(int argc, char **argv)
 {
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
+    SDL_Window *window2 = NULL;
+    SDL_Renderer *renderer2 = NULL;
 
     //Lancement SDL
     if(SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -25,24 +27,10 @@ int main(int argc, char **argv)
         SDL_ExitWithError("Création fenêtre échoué+rendu");
     
     /*------------------------------------------------------------------------*/
-    
-    SDL_Surface *imageFondMenu = NULL;
-    SDL_Texture *textureFondMenu = NULL;
-    SDL_Surface *buttonImage = NULL;
-    SDL_Surface *buttonTextue = NULL;
-
-    buttonImage = SDL_LoadBMP("button.bmp");
-    imageFondMenu = SDL_LoadBMP("photouno1.bmp");
-
-    //Charger l'image pour le bouton
-    if(buttonImage == NULL)
-    {
-        SDL_DestroyRenderer(renderer);
-        SDL_DestroyWindow(window);   
-        SDL_ExitWithError("Impossible de charger l'image du bouton");
-    }
 
     //Charger l'image pour le FondMenu
+    SDL_Surface *imageFondMenu = NULL;
+    imageFondMenu = SDL_LoadBMP("photouno1.bmp");
     if(imageFondMenu == NULL)
     {
         SDL_DestroyRenderer(renderer);
@@ -51,9 +39,9 @@ int main(int argc, char **argv)
     }
 
     //Créer la texture pour le FondMenu
+    SDL_Texture *textureFondMenu = NULL;
     textureFondMenu = SDL_CreateTextureFromSurface(renderer, imageFondMenu);
     SDL_FreeSurface(imageFondMenu);
-
     if(textureFondMenu == NULL)
     {
         SDL_DestroyRenderer(renderer);
@@ -61,8 +49,10 @@ int main(int argc, char **argv)
         SDL_ExitWithError("Impossible de crée la texture du menu");
     }
 
+    // Positionner le rectangle pour le FondMenu
     SDL_Rect rectangle;
 
+    // Afficher le FondMenu
     if(SDL_QueryTexture(textureFondMenu, NULL, NULL, &rectangle.w, &rectangle.h) != 0)
     {
         SDL_DestroyRenderer(renderer);
@@ -80,12 +70,21 @@ int main(int argc, char **argv)
         SDL_ExitWithError("Impossible d'afficher la texture du menu'");
     }
 
-        ///
+    //Charger l'image pour le bouton PlayMenu
+    SDL_Surface *buttonPlayMenu = NULL;
+    buttonPlayMenu = SDL_LoadBMP("buttonPlayMenu.bmp");
+    if(buttonPlayMenu == NULL)
+    {
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);   
+        SDL_ExitWithError("Impossible de charger l'image du bouton");
+    }
 
-    // Créer la texture pour le bouton
+
+    // Créer la texture pour le bouton PlayMenu
     SDL_Texture *buttonTexture = NULL;
-    buttonTexture = SDL_CreateTextureFromSurface(renderer, buttonImage);
-    SDL_FreeSurface(buttonImage);
+    buttonTexture = SDL_CreateTextureFromSurface(renderer, buttonPlayMenu);
+    SDL_FreeSurface(buttonPlayMenu);
     if(buttonTexture == NULL)
     {
         SDL_DestroyRenderer(renderer);
@@ -108,7 +107,6 @@ int main(int argc, char **argv)
         SDL_ExitWithError("Impossible d'afficher le bouton");
     }
 
-    ///
 
     //Afficher le rendu
     SDL_RenderPresent(renderer);
@@ -130,7 +128,24 @@ int main(int argc, char **argv)
                     event.button.x >= buttonRect.x && event.button.x < buttonRect.x + buttonRect.w && 
                     event.button.y >= buttonRect.y && event.button.y < buttonRect.y + buttonRect.h)
                 {
-                    printf("Le bouton a été cliqué !\n");
+                    printf("Le bouton a été cliqué sur Play !\n");
+
+                    if(SDL_CreateWindowAndRenderer2(WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window2, &renderer2) != 0)
+                    SDL_ExitWithError("Création fenêtre échoué+rendu");
+
+                    SDL_Window *newWindow = SDL_CreateWindow("Nouvelle fenêtre", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 320, 240, SDL_WINDOW_SHOWN);
+                    if (newWindow == NULL) {
+                    SDL_Log("Erreur de création de la nouvelle fenêtre : %s", SDL_GetError());
+                    return 1;
+                    }
+
+                    // Créer un rendu pour la nouvelle fenêtre
+                    SDL_Renderer *newRenderer = SDL_CreateRenderer(newWindow, -1, 0);
+                    if (newRenderer == NULL) {
+                        SDL_Log("Erreur de création du rendu pour la nouvelle fenêtre : %s", SDL_GetError());
+                        return 1;
+                    }
+                        
                 }
                 break;
 
