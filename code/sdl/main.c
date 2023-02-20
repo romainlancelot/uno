@@ -4,8 +4,10 @@
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
+#define BUTTON_WIDTH 256
+#define BUTTON_HEIGHT 100
 //gcc main.c $(sdl2-config --cflags --libs) -o output
-//gcc main.c -o output -lSDL2 -lSDL2_ttf
+
 
 void SDL_ExitWithError(const char *message);
 
@@ -24,50 +26,94 @@ int main(int argc, char **argv)
     
     /*------------------------------------------------------------------------*/
     
-    SDL_Surface *image = NULL;
-    SDL_Texture *texture = NULL;
- 
-    image = SDL_LoadBMP("photouno1.bmp");
+    SDL_Surface *imageFondMenu = NULL;
+    SDL_Texture *textureFondMenu = NULL;
+    SDL_Surface *buttonImage = NULL;
+    SDL_Surface *buttonTextue = NULL;
 
-    if(image == NULL)
+    buttonImage = SDL_LoadBMP("button.bmp");
+    imageFondMenu = SDL_LoadBMP("photouno1.bmp");
+
+    //Charger l'image pour le bouton
+    if(buttonImage == NULL)
     {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);   
-        SDL_ExitWithError("Impossible de charger l'image");
+        SDL_ExitWithError("Impossible de charger l'image du bouton");
     }
 
-    texture = SDL_CreateTextureFromSurface(renderer, image);
-    SDL_FreeSurface(image);
-
-    if(texture == NULL)
+    //Charger l'image pour le FondMenu
+    if(imageFondMenu == NULL)
     {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);   
-        SDL_ExitWithError("Impossible de crée la texture");
+        SDL_ExitWithError("Impossible de charger l'image du menu");
+    }
+
+    //Créer la texture pour le FondMenu
+    textureFondMenu = SDL_CreateTextureFromSurface(renderer, imageFondMenu);
+    SDL_FreeSurface(imageFondMenu);
+
+    if(textureFondMenu == NULL)
+    {
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);   
+        SDL_ExitWithError("Impossible de crée la texture du menu");
     }
 
     SDL_Rect rectangle;
 
-    if(SDL_QueryTexture(texture, NULL, NULL, &rectangle.w, &rectangle.h) != 0)
+    if(SDL_QueryTexture(textureFondMenu, NULL, NULL, &rectangle.w, &rectangle.h) != 0)
     {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);   
-        SDL_ExitWithError("Impossible de charger la texture");
+        SDL_ExitWithError("Impossible de charger la texture du menu");
     }
 
     rectangle.x = (WINDOW_WIDTH - rectangle.w) /2;
     rectangle.y = (WINDOW_HEIGHT - rectangle.h) /2;
 
-    if(SDL_RenderCopy(renderer, texture, NULL, &rectangle) != 0)
+    if(SDL_RenderCopy(renderer, textureFondMenu, NULL, &rectangle) != 0)
     {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);   
-        SDL_ExitWithError("Impossible d'afficher la texture'");
+        SDL_ExitWithError("Impossible d'afficher la texture du menu'");
     }
 
+        ///
+
+    // Créer la texture pour le bouton
+    SDL_Texture *buttonTexture = NULL;
+    buttonTexture = SDL_CreateTextureFromSurface(renderer, buttonImage);
+    SDL_FreeSurface(buttonImage);
+    if(buttonTexture == NULL)
+    {
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);   
+        SDL_ExitWithError("Impossible de crée la texture du bouton");
+    }
+
+    // Positionner le rectangle pour le bouton
+    SDL_Rect buttonRect;
+    buttonRect.w = BUTTON_WIDTH;
+    buttonRect.h = BUTTON_HEIGHT;
+    buttonRect.x = (WINDOW_WIDTH - BUTTON_WIDTH) / 2;
+    buttonRect.y = (WINDOW_HEIGHT - BUTTON_HEIGHT) / 2;
+
+    // Afficher le bouton
+    if(SDL_RenderCopy(renderer, buttonTexture, NULL, &buttonRect) != 0)
+    {
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);   
+        SDL_ExitWithError("Impossible d'afficher le bouton");
+    }
+
+    ///
+
+    //Afficher le rendu
     SDL_RenderPresent(renderer);
 
-    /////////
+    /////////Boucle de lancement 
     SDL_bool program_launched = SDL_TRUE;
 
     while(program_launched)
@@ -78,6 +124,16 @@ int main(int argc, char **argv)
         {
             switch (event.type)
             {
+
+            case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == SDL_BUTTON_LEFT && 
+                    event.button.x >= buttonRect.x && event.button.x < buttonRect.x + buttonRect.w && 
+                    event.button.y >= buttonRect.y && event.button.y < buttonRect.y + buttonRect.h)
+                {
+                    printf("Le bouton a été cliqué !\n");
+                }
+                break;
+
             case SDL_QUIT:
                 program_launched = SDL_FALSE;
                 break;
