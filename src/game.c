@@ -171,15 +171,15 @@ static int gameAlone() {
 			}
 
 			if (inversion % 2 == 0) {
-					i++;
-					i = i%nbJoueurs;
-				} else {
-					i--;
-					i = i%nbJoueurs;
-					if(i < 0){
-						i = nbJoueurs + i;
-					}
+				i++;
+				i = i%nbJoueurs;
+			} else {
+				i--;
+				i = i%nbJoueurs;
+				if (i < 0){
+					i = nbJoueurs + i;
 				}
+			}
 		}
 	} while (joueurs[0].nbCartes != 0 || joueurs[1].nbCartes != 0);
 }
