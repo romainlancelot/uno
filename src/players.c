@@ -96,9 +96,11 @@ void afficherMain(joueur *j) {
 
 int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inversion, int *draw) {
   int choix;
+  char charchoix[10];
   do {
     printf("Que voulez vous faire ?\n\t1. Poser une carte\n\t2. Piocher une carte\n\n => ");
-    scanf("%d", &choix);
+    scanf("%s", charchoix);
+    choix = atoi(charchoix);
   } while (choix != 1 && choix != 2);
   switch (choix) {
     case 1:
