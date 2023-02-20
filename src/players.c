@@ -55,6 +55,18 @@ void creationJoueur(joueur *j, int nbJoueurs) {
   }
 }
 
+//création du joueur ordinateur pour les partis solo
+void creationBot(joueur *j, int nbJoueurs) {
+  strcpy(j->nom, "robot");
+  j->score = 0;
+  j->nbCartes = 7;
+  // piocher 7 cartes
+  for (int i = 0; i < j->nbCartes; i++) {
+    j->main[i] = pioche(0);
+    supprCarteDePioche();
+  }
+}
+
 // trier la main du joueur
 void trierMain(joueur *j) {
   int i, x;

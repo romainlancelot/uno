@@ -25,6 +25,7 @@ extern joueur joueurs[];
 /* Fonctionnalités publiques du module */
 extern void initTapis ();
 extern void creationJoueur (joueur *j, int nbJoueurs);
+extern void creationBot (joueur *j, int nbJoueurs);
 extern void trierMain(joueur *j);
 extern void afficherMain(joueur *j);
 extern int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inversion, int *draw);
