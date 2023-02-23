@@ -1,28 +1,45 @@
+<!--
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-
+-->
 
 <!-- PROJECT LOGO -->
 <br>
 <div align="center">
-  <a href="https://github.com/romainlancelot/uno">
-    <img src="img/uno.jpg" alt="Logo" width="150" height="150">
-  </a>
+	<a href="https://github.com/romainlancelot/uno">
+		<img src="img/uno.jpg" alt="Logo" width="150" height="150">
+	</a>
+	<h2 align="center">Final project of C in 2A at ESGI (2022-2023)</h2>
+	<hr>
+	<a href="https://github.com/romainlancelot/uno/graphs/contributors">
+		<img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/romainlancelot/uno" />
+	</a>
+	<a href="https://github.com/romainlancelot/uno/graphs/stars">
+		<img alt="GitHub Stars" src="https://img.shields.io/github/stars/romainlancelot/uno" />
+	</a>
+	<a href="https://github.com/romainlancelot/uno/graphs/forks">
+		<img alt="GitHub Forks" src="https://img.shields.io/github/forks/romainlancelot/uno" />
+	</a>
+	<a href="https://github.com/romainlancelot/uno/issues">
+		<img alt="Issues" src="https://img.shields.io/github/issues/romainlancelot/uno?color=0088ff" />
+	</a>
+	<a href="https://github.com/romainlancelot/uno/pulls">
+		<img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/romainlancelot/uno?color=0088ff" />
+	</a>
 
-<h3 align="center">Final project of C in 2A at ESGI (2022-2023)</h3>
 
   <p align="center">
-    <a href="https://www.cprogramming.com/" target="_blank" rel="noreferrer">
-        <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/c/c-original.svg" alt="c" width="40" height="40"/>
+	<a href="https://www.cprogramming.com/" target="_blank" rel="noreferrer">
+		<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/c/c-original.svg" alt="c" width="40" height="40"/>
   </a>
-    <br>
-    <a href="https://github.com/romainlancelot/uno">View Demo</a>
-    ·
-    <a href="https://github.com/romainlancelot/uno/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/romainlancelot/uno/issues">Request Feature</a>
+	<br>
+	<a href="https://github.com/romainlancelot/uno">View Demo</a>
+	·
+	<a href="https://github.com/romainlancelot/uno/issues">Report Bug</a>
+	·
+	<a href="https://github.com/romainlancelot/uno/issues">Request Feature</a>
   </p>
 </div>
 
@@ -81,12 +98,12 @@ To begin with you need to install something to compile a C program on your compu
 ## Roadmap
 
 - [x] Create game assets:
-    - [x 19 cards per color
-    - [x] 8 cards "+2"
-    - [x] 8 cards "Reverse"
-    - [x] 8 cards "Skip"
-    - [x] 4 cards "Joker"
-    - [x] 4 cards "+4"
+	- [x 19 cards per color
+	- [x] 8 cards "+2"
+	- [x] 8 cards "Reverse"
+	- [x] 8 cards "Skip"
+	- [x] 4 cards "Joker"
+	- [x] 4 cards "+4"
 - [x] Random card distribution system according to the number of players.
 - [x] Create a discard pile for used cards (which return in random order to the deck when the deck is empty).
 - [x] Setting up the rules (colors on colors, numbers on numbers, special cards...).
