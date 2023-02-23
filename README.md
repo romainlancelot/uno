@@ -11,7 +11,7 @@
     <img src="img/uno.jpg" alt="Logo" width="150" height="150">
   </a>
 
-<h3 align="center">Projet final de C en 2A à l'ESGI (2022-2023)</h3>
+<h3 align="center">Final project of C in 2A at ESGI (2022-2023)</h3>
 
   <p align="center">
     <a href="https://www.cprogramming.com/" target="_blank" rel="noreferrer">
