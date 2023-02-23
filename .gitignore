@@ -14,3 +14,4 @@ uno
 # temporary files
 *.tmp
 *.old
+.DS_Store
