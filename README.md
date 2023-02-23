@@ -12,7 +12,6 @@
 		<img src="img/uno.jpg" alt="Logo" width="150" height="150">
 	</a>
 	<h2 align="center">Final project of C in 2A at ESGI (2022-2023)</h2>
-	<hr>
 	<a href="https://github.com/romainlancelot/uno/graphs/contributors">
 		<img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/romainlancelot/uno" />
 	</a>
