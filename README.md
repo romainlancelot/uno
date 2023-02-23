@@ -77,28 +77,28 @@ To begin with you need to install something to compile a C program on your compu
 5. Enjoy ! 😎
 
 
-
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Create game assets:
-    - [ ] 19 cards per color
-    - [ ] 8 cards "+2"
-    - [ ] 8 cards "Reverse"
-    - [ ] 8 cards "Skip"
-    - [ ] 4 cards "Joker"
-    - [ ] 4 cards "+4"
-- [ ] Random card distribution system according to the number of players.
-- [ ] Create a discard pile for used cards (which return in random order to the deck when the deck is empty).
-- [ ] Setting up the rules (colors on colors, numbers on numbers, special cards...).
-    - [ ] Nested Feature
+- [x] Create game assets:
+    - [x 19 cards per color
+    - [x] 8 cards "+2"
+    - [x] 8 cards "Reverse"
+    - [x] 8 cards "Skip"
+    - [x] 4 cards "Joker"
+    - [x] 4 cards "+4"
+- [x] Random card distribution system according to the number of players.
+- [x] Create a discard pile for used cards (which return in random order to the deck when the deck is empty).
+- [x] Setting up the rules (colors on colors, numbers on numbers, special cards...).
 - [ ] Graphical interface: SDL.
 - [ ] Store scores (count the number of victories of each player) in a file.
-- [ ] Create a bot that can play (conditions) to play alone.
+- [x] Create a bot that can play (conditions) to play alone.
 - [ ] Network the game (ability to connect multiple computers).
 - [ ] BONUS: special modes (cards +20, the machines cards are multicolored...).
 
+
 See the [open issues](https://github.com/romainlancelot/uno/issues) for a full list of proposed features (and known issues).
+
 
 <!-- CONTACT -->
 ## Contact
