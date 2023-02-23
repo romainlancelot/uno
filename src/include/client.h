@@ -22,6 +22,5 @@ typedef struct clientInfos {
 
 /* Fonctionnalités publiques du module */
 extern void createClient(clientInfos *cli);
-extern void startClient(char *ip, int port);
 
 #endif

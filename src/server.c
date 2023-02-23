@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-// #include <string.h>
+#include <string.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -19,14 +19,11 @@ int isServer;
 serverInfos partyServer;
 
 /* Fonctionnalité privée au module par le mot clé static */
+static void closeConnection(int socketServer) {
+    close(socketServer);
+}
 
 /* Définition des fonctionnalités annoncées par l'entête */
-
-// void endConnection(int sockerClient, int socketServer) {
-//     close(socketClient);
-//     close(socketServer);
-// }
-
 void createServer() {
     printf("Entrez l'adresse IP du serveur : ");
     scanf("%s", partyServer.ip);
@@ -46,7 +43,12 @@ void createServer() {
     partyServer.nbClients = nbJoueurs;
 
     partyServer.socketServer = startServer(partyServer.ip, partyServer.port);
-    connectClients(partyServer.socketServer, partyServer.nbClients);
+    int status = connectClients(partyServer.socketServer, partyServer.nbClients);
+    if (status == 1) {
+        printf("Tous les clients sont connectés\n");
+    } else {
+        printf("Erreur lors de la connexion des clients\n");
+    }
 }
 
 int startServer(char *ip, int port) {
@@ -76,6 +78,16 @@ int connectClients(int socketServer, int nbClients) {
         printf("Connected : %d\n", socketClient);
         recv(socketClient, buffer, BUFFER_SIZE, 0);
         printf("Received : %s\n", buffer);
+        strcpy(joueurs[i].nom, buffer);
+        joueurs[i].score = 0;
+        joueurs[i].nbCartes = 7;
+        joueurs[i].isBot = 0;
+        // piocher 7 cartes
+        for (int j = 0; j < joueurs[i].nbCartes; j++) {
+            joueurs->main[j] = pioche(0);
+            supprCarteDePioche(); 
+        }
+        send(socketClient, &joueurs[i], sizeof(joueurs[i]), 0);
     }
 
     return 1;
