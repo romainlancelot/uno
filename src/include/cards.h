@@ -27,9 +27,9 @@ extern carte defausse[108];
 extern carte tapis[1];
 
 /* Fonctionnalités publiques du module */
-extern void creer_jeu ();
+extern void creer_jeu();
 extern int afficher_carte(carte *c);
-extern int transfertDefausseToPioche ();
+extern int transfertDefausseToPioche();
 extern int supprCarteDePioche();
 extern void tapisToDefausse();
 extern void carteToTapis();

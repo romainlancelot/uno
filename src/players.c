@@ -12,6 +12,95 @@ int nbJoueurs;
 joueur joueurs[3];
 
 /* Fonctionnalité privée au module par le mot clé static */
+// trier la main du joueur
+static void trierMain(joueur *j) {
+	int i, x;
+	carte temp;
+	for (i = 0; i < j->nbCartes; i++) {
+		for (x = i+1; x < j->nbCartes; x++) {
+			if (strcmp(j->main[i].couleur, j->main[x].couleur) > 0) {
+				temp = j->main[i];
+				j->main[i] = j->main[x];
+				j->main[x] = temp;
+			}
+			if (strcmp(j->main[i].couleur, j->main[x].couleur) == 0) {
+				if (strcmp(j->main[i].valeur, j->main[x].valeur) > 0) {
+					temp = j->main[i];
+					j->main[i] = j->main[x];
+					j->main[x] = temp;
+				}
+			}
+		}
+	}
+}
+
+static void carteSpeciale (joueur *j, carte *tapis, int *skipTurn, int *inversion, int *draw) {
+	if (strcmp(tapis[1].valeur, "draw+2") == 0) { *draw = 2; }
+	if (strcmp(tapis[1].valeur, "draw+4") == 0) { *draw = 4; }
+	if (strcmp(tapis[1].valeur, "skip") == 0) { *skipTurn = 1; }
+	if (strcmp(tapis[1].valeur, "inversion") == 0) { *inversion = *inversion + 1;	}
+}
+
+// joueur pose une carte
+static struct carte poseCarte(joueur *j, carte *tapis) {
+	char tmpChoix[10];
+	int choix, choixCouleur;
+	do {
+		printf("\nQuelle carte voulez vous jouer ? ('q' : annuler)\n => ");
+		scanf("%s", tmpChoix);
+		choix = atoi(tmpChoix);
+		if (strcmp(tmpChoix, "q") == 0) {
+			return (carte) { .valeur = "", .couleur = "", .piocheVide = 0, .annuler = 1 };
+		}
+		if (choix < 0 || choix > j->nbCartes) {
+			printf("Veuillez choisir une carte valide !\n");
+		}
+		if (strcmp(j->main[choix].couleur, "joker") == 0 || strcmp(j->main[choix].valeur , "changer") == 0) {
+			printf("Vous avez joué une carte changement de coueleur  !\nQuelle couleur voulez vous choisir ?\n");
+			do {
+				printf("Possibilités : { 1 : \033[0;31mrouge\033[0m | 2 : \033[0;33mjaune\033[0m | 3 : \033[0;32mvert\033[0m | 4 : \033[0;34mbleu\033[0m }\n => ");
+				scanf("%d", &choixCouleur);
+				if (choixCouleur < 1 || choixCouleur > 4) {
+					printf("Veuillez choisir une couleur valide !\n");
+				}
+			} while (choixCouleur < 1 || choixCouleur > 4);
+			switch (choixCouleur) {
+				case 1:
+					strcpy(j->main[choix].couleur, "rouge");
+					break;
+				case 2:
+					strcpy(j->main[choix].couleur, "jaune");
+					break;
+				case 3:
+					strcpy(j->main[choix].couleur, "vert");
+					break;
+				case 4:
+					strcpy(j->main[choix].couleur, "bleu");
+					break;
+			}
+			break;
+		} else if (strcmp(j->main[choix].couleur, tapis[1].couleur) != 0 && strcmp(j->main[choix].valeur, tapis[1].valeur) != 0) {
+			printf("Vous ne pouvez pas poser cette carte...\n");
+		}
+	} while (choix < 0 || choix > j->nbCartes || strcmp(j->main[choix].couleur, tapis[1].couleur) != 0 && strcmp(j->main[choix].valeur, tapis[1].valeur) != 0);
+	carte cartePosee = j->main[choix];
+
+	//mets la carte en question dans le tapis
+	strcpy(tapis[1].valeur, j->main[choix].valeur);
+	strcpy(tapis[1].couleur, j->main[choix].couleur);
+
+	//mets la carte du tapis dans la défausse
+	tapisToDefausse();
+
+	// supprime la carte joué de la main du joueur
+	for (int i = choix; i < j->nbCartes; i++) {
+		j->main[i] = j->main[i+1];
+	}
+	j->nbCartes--;
+
+	afficherMain(j);
+	return cartePosee;
+}
 
 // fonction pour une carte aléatoire
 static int aleatoire(int *taillePioche) {
@@ -86,28 +175,6 @@ void creationBot(joueur *j) {
 	for (int i = 0; i < j->nbCartes; i++) {
 		j->main[i] = pioche(0);
 		supprCarteDePioche();
-	}
-}
-
-// trier la main du joueur
-void trierMain(joueur *j) {
-	int i, x;
-	carte temp;
-	for (i = 0; i < j->nbCartes; i++) {
-		for (x = i+1; x < j->nbCartes; x++) {
-			if (strcmp(j->main[i].couleur, j->main[x].couleur) > 0) {
-				temp = j->main[i];
-				j->main[i] = j->main[x];
-				j->main[x] = temp;
-			}
-			if (strcmp(j->main[i].couleur, j->main[x].couleur) == 0) {
-				if (strcmp(j->main[i].valeur, j->main[x].valeur) > 0) {
-					temp = j->main[i];
-					j->main[i] = j->main[x];
-					j->main[x] = temp;
-				}
-			}
-		}
 	}
 }
 
@@ -271,13 +338,6 @@ int joueurJoue (joueur *j, int nbJoueurs, carte *tapis, int *skipTurn, int *inve
 	return 1;
 }
 
-void carteSpeciale (joueur *j, carte *tapis, int *skipTurn, int *inversion, int *draw) {
-	if (strcmp(tapis[1].valeur, "draw+2") == 0) { *draw = 2; }
-	if (strcmp(tapis[1].valeur, "draw+4") == 0) { *draw = 4; }
-	if (strcmp(tapis[1].valeur, "skip") == 0) { *skipTurn = 1; }
-	if (strcmp(tapis[1].valeur, "inversion") == 0) { *inversion = *inversion + 1;	}
-}
-
 struct carte pioche(int afficher) {
 	// récupère un nb aléatoire
 	rang = aleatoire(&taillePioche);
@@ -303,65 +363,4 @@ struct carte piocheCarte(joueur *j) {
 	j->nbCartes++;
 	supprCarteDePioche();
 	return j->main[j->nbCartes-1];
-}
-
-// joueur pose une carte
-struct carte poseCarte(joueur *j, carte *tapis) {
-	char tmpChoix[10];
-	int choix, choixCouleur;
-	do {
-		printf("\nQuelle carte voulez vous jouer ? ('q' : annuler)\n => ");
-		scanf("%s", tmpChoix);
-		choix = atoi(tmpChoix);
-		if (strcmp(tmpChoix, "q") == 0) {
-			return (carte) { .valeur = "", .couleur = "", .piocheVide = 0, .annuler = 1 };
-		}
-		if (choix < 0 || choix > j->nbCartes) {
-			printf("Veuillez choisir une carte valide !\n");
-		}
-		if (strcmp(j->main[choix].couleur, "joker") == 0 || strcmp(j->main[choix].valeur , "changer") == 0) {
-			printf("Vous avez joué une carte changement de coueleur  !\nQuelle couleur voulez vous choisir ?\n");
-			do {
-				printf("Possibilités : { 1 : \033[0;31mrouge\033[0m | 2 : \033[0;33mjaune\033[0m | 3 : \033[0;32mvert\033[0m | 4 : \033[0;34mbleu\033[0m }\n => ");
-				scanf("%d", &choixCouleur);
-				if (choixCouleur < 1 || choixCouleur > 4) {
-					printf("Veuillez choisir une couleur valide !\n");
-				}
-			} while (choixCouleur < 1 || choixCouleur > 4);
-			switch (choixCouleur) {
-				case 1:
-					strcpy(j->main[choix].couleur, "rouge");
-					break;
-				case 2:
-					strcpy(j->main[choix].couleur, "jaune");
-					break;
-				case 3:
-					strcpy(j->main[choix].couleur, "vert");
-					break;
-				case 4:
-					strcpy(j->main[choix].couleur, "bleu");
-					break;
-			}
-			break;
-		} else if (strcmp(j->main[choix].couleur, tapis[1].couleur) != 0 && strcmp(j->main[choix].valeur, tapis[1].valeur) != 0) {
-			printf("Vous ne pouvez pas poser cette carte...\n");
-		}
-	} while (choix < 0 || choix > j->nbCartes || strcmp(j->main[choix].couleur, tapis[1].couleur) != 0 && strcmp(j->main[choix].valeur, tapis[1].valeur) != 0);
-	carte cartePosee = j->main[choix];
-
-	//mets la carte en question dans le tapis
-	strcpy(tapis[1].valeur, j->main[choix].valeur);
-	strcpy(tapis[1].couleur, j->main[choix].couleur);
-
-	//mets la carte du tapis dans la défausse
-	tapisToDefausse();
-
-	// supprime la carte joué de la main du joueur
-	for (int i = choix; i < j->nbCartes; i++) {
-		j->main[i] = j->main[i+1];
-	}
-	j->nbCartes--;
-
-	afficherMain(j);
-	return cartePosee;
 }
