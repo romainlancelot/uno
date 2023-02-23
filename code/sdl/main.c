@@ -130,8 +130,8 @@ int main(int argc, char **argv)
                 {
                     printf("Le bouton a été cliqué sur Play !\n");
 
-                    if(SDL_CreateWindowAndRenderer2(WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window2, &renderer2) != 0)
-                    SDL_ExitWithError("Création fenêtre échoué+rendu");
+                    // if(SDL_CreateWindowAndRenderer2(WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window2, &renderer2) != 0)
+                    // SDL_ExitWithError("Création fenêtre échoué+rendu");
 
                     SDL_Window *newWindow = SDL_CreateWindow("Nouvelle fenêtre", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 320, 240, SDL_WINDOW_SHOWN);
                     if (newWindow == NULL) {
